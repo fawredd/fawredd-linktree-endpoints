@@ -8,7 +8,7 @@ export interface Profile {
   name: string
   description: string | null
   profile_image_url: string | null
-  background_image_url: string | null
+  hero_image_url: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -34,7 +34,7 @@ export interface Service {
   is_active: boolean
   created_at: string
   updated_at: string
-  profileId: string
+  profileId: number
 }
 
 export async function getProfileBySlug(slug: string): Promise<Profile | null> {
@@ -79,12 +79,11 @@ export async function getAllProfiles(): Promise<Profile[]> {
   }
 }
 
-export async function getServiceBySlug(slug: string): Promise<Service | null> {
+export async function getServiceByProfileIdAndSlug(profileId: number, serviceSlug:string): Promise<Service | null> {
   try {
     const result = await sql`
       SELECT * FROM services 
-      WHERE slug = ${slug} AND is_active = true
-      LIMIT 1
+      WHERE "profileId" = ${profileId} AND is_active = true AND slug = ${serviceSlug}
     `
     return (result[0] as Service) || null
   } catch (error) {
@@ -93,14 +92,14 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
   }
 }
 
-export async function getAllServices(): Promise<Service[]> {
+export async function getAllServicesByProfileId(profileId:number): Promise<Service[]> {
   try {
     const result = await sql`
       SELECT * FROM services 
-      WHERE is_active = true
+      WHERE is_active = true and "profileId" = ${profileId}
       ORDER BY created_at DESC
     `
-    return result as Service[]
+    return result as Service[] | []
   } catch (error) {
     console.error("Error fetching all services:", error)
     return []

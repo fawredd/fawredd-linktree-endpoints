@@ -3,8 +3,6 @@ import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import "./globals.css"
-import HeroSection from "@/components/hero"
-import GeneralContext from "@/components/context-provider"
 
 export const metadata: Metadata = {
   title: "fawredd linktr.ee endpoints websites",
@@ -29,10 +27,7 @@ html {
         `}</style>
       </head>
       <body className="font-sans antialiased">
-        <GeneralContext>
-          <HeroSection />
           {children}
-        </GeneralContext>
       </body>
     </html>
   )

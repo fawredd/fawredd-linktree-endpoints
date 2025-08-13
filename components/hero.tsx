@@ -1,22 +1,43 @@
-'use client'
 import Image from "next/image"
-import { useContext} from "react"
-import { TheContext } from "@/components/context-provider"
+import { Button } from "@/components/ui/button"
+import { Bell, Share } from "lucide-react"
+
+interface HeroSectionProps {
+  backgroundImage?: string
+  profileImage?: string
+  profileName?: string
+}
 
 
-const HeroSection = () => {
-  const context = useContext(TheContext)
-   if (!context) {
-    throw new Error('HeroSection debe ser usado dentro de un GeneralContext')
-  }
-  const { heroImageURL, logoImageUrl } = context
+const HeroSection =({
+  backgroundImage = "/placeholder.svg",
+  profileImage = "/placeholder.svg",
+  profileName = "Profile",
+}: HeroSectionProps) => {
 
   return (
     <div className="relative w-full h-40 border-b-2 mb-12 md:mb-28">
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full px-4 py-2"
+        >
+          <Bell className="w-4 h-4 mr-2" />
+          Subscribe
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full p-2"
+        >
+          <Share className="w-4 h-4" />
+        </Button>
+      </div>
       {/* Fondo de la sección Hero */}
       <Image
-        src={heroImageURL}
-        alt="Hero background"
+        src={backgroundImage}
+        alt={`${profileName} hero background`}
         className="object-cover w-full h-full"
         width={400}
         height={96}
@@ -30,8 +51,8 @@ const HeroSection = () => {
         <div className="w-16 h-16 md:w-32 md:h-32 rounded-full bg-white border-4 border-white shadow-lg">
           {/* Aquí puedes colocar la imagen de perfil */}
           <Image
-            src={logoImageUrl}
-            alt="Profile picture"
+            src={profileImage}
+            alt={`${profileName} picture`}
             width={128}
             height={128}
             className="rounded-full"
