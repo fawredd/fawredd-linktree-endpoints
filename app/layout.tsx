@@ -2,14 +2,13 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
-import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
 import HeroSection from "@/components/hero"
-import SocialLinks from "@/components/social-links"
+import GeneralContext from "@/components/context-provider"
 
 export const metadata: Metadata = {
-  title: "Mgd.expansión",
-  description: "",
+  title: "fawredd linktr.ee endpoints websites",
+  description: "Crea los enlaces de asociados a linktr.ee",
   generator: "fawredd",
 }
 
@@ -30,13 +29,10 @@ html {
         `}</style>
       </head>
       <body className="font-sans antialiased">
-        <HeroSection />
-        <SocialLinks socialLinks={[
-          {platform:'instagram',url:'https://www.instagram.com/mgd.expancion'},
-          {platform:'email',url:'https://www.instagram.com/mgd.expancion'},
-          ]} />
-        {children}
-        <Toaster />
+        <GeneralContext>
+          <HeroSection />
+          {children}
+        </GeneralContext>
       </body>
     </html>
   )

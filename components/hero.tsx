@@ -1,11 +1,21 @@
+'use client'
 import Image from "next/image"
+import { useContext} from "react"
+import { TheContext } from "@/components/context-provider"
+
 
 const HeroSection = () => {
+  const context = useContext(TheContext)
+   if (!context) {
+    throw new Error('HeroSection debe ser usado dentro de un GeneralContext')
+  }
+  const { heroImageURL, logoImageUrl } = context
+
   return (
     <div className="relative w-full h-40 border-b-2 mb-12 md:mb-28">
       {/* Fondo de la sección Hero */}
       <Image
-        src="/heroBackground.jpg"
+        src={heroImageURL}
         alt="Hero background"
         className="object-cover w-full h-full"
         width={400}
@@ -20,7 +30,7 @@ const HeroSection = () => {
         <div className="w-16 h-16 md:w-32 md:h-32 rounded-full bg-white border-4 border-white shadow-lg">
           {/* Aquí puedes colocar la imagen de perfil */}
           <Image
-            src="/Logo-MGD-PNG-transparente.png" // Reemplaza con la ruta de tu foto de perfil
+            src={logoImageUrl}
             alt="Profile picture"
             width={128}
             height={128}

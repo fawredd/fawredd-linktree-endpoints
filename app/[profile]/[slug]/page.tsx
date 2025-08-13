@@ -2,14 +2,15 @@ import {notFound} from "next/navigation";
 import { descripciones } from "@/assets/descriptions";
 
 interface HomePageProps {
-  slug: string;
+  params: Promise<{ slug: string }>;
 }
 
-export default async function HomePage({ slug }: HomePageProps) {
+export default async function HomePage({ params }: HomePageProps) {
+  const { slug } = await params;
   const cleanSlug = sanitizeSlug(slug);
-  console.log(cleanSlug)
+  console.log(slug, cleanSlug)
   const {titulo, descripcion} = descripciones[cleanSlug] || {titulo:'',descripcion:''}
-  //if (!titulo) return notFound()
+  if (!titulo) return notFound()
   return (
   <div className="container mx-auto">
     <div className="m-4 relative">
