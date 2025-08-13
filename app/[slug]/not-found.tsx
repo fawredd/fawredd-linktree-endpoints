@@ -8,10 +8,7 @@ export default function NotFound() {
         <div className="w-32 h-32 mx-auto mb-6 bg-stone-200 rounded-full flex items-center justify-center">
           <div className="text-4xl text-stone-400">?</div>
         </div>
-
-        <h1 className="text-2xl font-bold text-stone-900 mb-2">Servicio No Encontrado</h1>
-
-        <p className="text-stone-600 mb-6">El servicio que buscas no existe o ha sido removido.</p>
+        <h1 className="text-2xl font-bold text-stone-900 mb-2">Sitio No Encontrado</h1>
 
         <Button asChild>
           <Link href="/">Volver al Inicio</Link>

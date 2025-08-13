@@ -1,59 +1,30 @@
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Bell, Share } from "lucide-react"
 
-interface HeroSectionProps {
-  backgroundImage?: string
-  profileImage?: string
-  profileName?: string
-}
-
-const HeroSection = ({
-  backgroundImage = "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/baseLayout-dWWCDxrbCBH1OZZynhhmicJ5d4UKsI.jpeg",
-  profileImage = "/diverse-group-profile.png",
-  profileName = "Profile",
-}: HeroSectionProps) => {
+const HeroSection = () => {
   return (
-    <div className="relative w-full h-80 bg-gray-200">
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full px-4 py-2"
-        >
-          <Bell className="w-4 h-4 mr-2" />
-          Subscribe
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full p-2"
-        >
-          <Share className="w-4 h-4" />
-        </Button>
-      </div>
-
+    <div className="relative w-full h-40 border-b-2 mb-8 md:mb-28">
+      {/* Fondo de la sección Hero */}
       <Image
-        src={backgroundImage || "/placeholder.svg"}
+        src="/heroBackground.jpg"
         alt="Hero background"
-        fill
-        className="object-cover rounded-b-2xl"
-        priority
+        layout="fill"
+        objectFit="cover"
       />
 
-      <div className="absolute inset-0 bg-black/40 rounded-b-2xl"></div>
+      {/* Superposición para el efecto borroso/oscuro */}
+      <div className="absolute inset-0 bg-black opacity-30"></div>
 
-      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-16 z-10">
-        <div className="w-32 h-32 rounded-full bg-white p-1 shadow-lg">
-          <div className="w-full h-full rounded-full overflow-hidden border-4 border-amber-800">
-            <Image
-              src={profileImage || "/placeholder.svg"}
-              alt={`${profileName} profile picture`}
-              width={120}
-              height={120}
-              className="w-full h-full object-cover"
-            />
-          </div>
+      {/* Círculo de la foto de perfil que se superpone */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-8 md:-bottom-16">
+        <div className="w-16 h-16 md:w-32 md:h-32 rounded-full bg-white border-4 border-white shadow-lg">
+          {/* Aquí puedes colocar la imagen de perfil */}
+          <Image
+            src="/Logo-MGD-PNG-transparente.png" // Reemplaza con la ruta de tu foto de perfil
+            alt="Profile picture"
+            width={128}
+            height={128}
+            className="rounded-full"
+          />
         </div>
       </div>
     </div>

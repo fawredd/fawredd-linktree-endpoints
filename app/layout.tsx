@@ -4,6 +4,8 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css"
+import HeroSection from "@/components/hero"
+import SocialLinks from "@/components/social-links"
 
 export const metadata: Metadata = {
   title: "Mgd.expansión",
@@ -28,6 +30,10 @@ html {
         `}</style>
       </head>
       <body className="font-sans antialiased">
+        <HeroSection />
+        <SocialLinks socialLinks={[
+          {platform:'instagram',url:'https://www.instagram.com/mgd.expancion'},
+          ]} />
         {children}
         <Toaster />
       </body>

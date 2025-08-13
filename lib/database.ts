@@ -14,19 +14,6 @@ export interface Profile {
   updated_at: string
 }
 
-export interface ProfileLink {
-  id: number
-  profile_id: number
-  title: string
-  url: string
-  description: string | null
-  icon_name: string | null
-  is_active: boolean
-  sort_order: number
-  created_at: string
-  updated_at: string
-}
-
 export interface SocialLink {
   id: number
   profile_id: number
@@ -47,16 +34,7 @@ export interface Service {
   is_active: boolean
   created_at: string
   updated_at: string
-}
-
-export interface ServiceFeature {
-  id: number
-  service_id: number
-  title: string
-  description: string | null
-  icon: string | null
-  order_index: number
-  created_at: string
+  profileId: string
 }
 
 export async function getProfileBySlug(slug: string): Promise<Profile | null> {
@@ -70,20 +48,6 @@ export async function getProfileBySlug(slug: string): Promise<Profile | null> {
   } catch (error) {
     console.error("Error fetching profile:", error)
     return null
-  }
-}
-
-export async function getProfileLinks(profileId: number): Promise<ProfileLink[]> {
-  try {
-    const result = await sql`
-      SELECT * FROM profile_links 
-      WHERE profile_id = ${profileId} AND is_active = true
-      ORDER BY sort_order ASC, created_at ASC
-    `
-    return result as ProfileLink[]
-  } catch (error) {
-    console.error("Error fetching profile links:", error)
-    return []
   }
 }
 
@@ -126,20 +90,6 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
   } catch (error) {
     console.error("Error fetching service:", error)
     return null
-  }
-}
-
-export async function getServiceFeatures(serviceId: number): Promise<ServiceFeature[]> {
-  try {
-    const result = await sql`
-      SELECT * FROM service_features 
-      WHERE service_id = ${serviceId}
-      ORDER BY order_index ASC, created_at ASC
-    `
-    return result as ServiceFeature[]
-  } catch (error) {
-    console.error("Error fetching service features:", error)
-    return []
   }
 }
 

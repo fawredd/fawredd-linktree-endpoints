@@ -43,74 +43,128 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ============================================
+  FAWREDD MAUVE THEME - LIGHT MODE
+  ============================================
+*/
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Base Colors */
+  --background: rgb(181 151 173); /* Dusty Mauve */
+  --foreground: rgb(66 55 63); /* Dark Plum */
+
+  /* Card */
+  --card: rgb(252 249 251); /* Pale Lilac */
+  --card-foreground: rgb(66 55 63); /* Dark Plum */
+
+  /* Popover */
+  --popover: rgb(252 249 251); /* Pale Lilac */
+  --popover-foreground: rgb(66 55 63); /* Dark Plum */
+
+  /* Primary */
+  --primary: rgb(109 89 103); /* Muted Plum */
+  --primary-foreground: rgb(255 255 255); /* White */
+
+  /* Secondary */
+  --secondary: rgb(232 225 230); /* Light Mauve Gray */
+  --secondary-foreground: rgb(66 55 63); /* Dark Plum */
+
+  /* Muted */
+  --muted: rgb(232 225 230); /* Light Mauve Gray */
+  --muted-foreground: rgb(119 105 115); /* Medium Grayish Mauve */
+
+  /* Accent */
+  --accent: rgb(245 240 243); /* Very Light Mauve Gray */
+  --accent-foreground: rgb(87 71 82); /* Muted Plum */
+
+  /* Destructive */
+  --destructive: rgb(194 92 92); /* Muted Red */
+  --destructive-foreground: rgb(255 255 255); /* White */
+
+  /* Interactive Elements */
+  --border: rgb(222 212 219); /* Light Grayish Mauve */
+  --input: rgb(222 212 219); /* Light Grayish Mauve */
+  --ring: rgb(159 130 151); /* Brighter Mauve for focus */
+
+  /* Charts */
+  --chart-1: rgb(79 140 140);   /* Muted Teal */
+  --chart-2: rgb(191 155 88);  /* Muted Gold */
+  --chart-3: rgb(92 124 179);  /* Muted Blue */
+  --chart-4: rgb(108 153 108); /* Muted Green */
+  --chart-5: rgb(217 125 108); /* Muted Coral */
+
+  /* Sidebar */
+  --sidebar: rgb(245 240 243); /* Pale Lilac, same as accent */
+  --sidebar-foreground: rgb(66 55 63); /* Dark Plum */
+  --sidebar-primary: rgb(109 89 103); /* Muted Plum */
+  --sidebar-primary-foreground: rgb(255 255 255); /* White */
+  --sidebar-accent: rgb(232 225 230); /* Light Mauve Gray */
+  --sidebar-accent-foreground: rgb(66 55 63); /* Dark Plum */
+  --sidebar-border: rgb(222 212 219); /* Light Grayish Mauve */
+  --sidebar-ring: rgb(159 130 151); /* Brighter Mauve for focus */
 }
 
+/* ============================================
+  MAUVE THEME - DARK MODE
+  ============================================
+*/
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  /* Base Colors */
+  --background: rgb(41 34 39); /* Deep Eggplant */
+  --foreground: rgb(232 225 230); /* Light Mauve Gray */
+
+  /* Card */
+  --card: rgb(56 47 53); /* Dark Plum */
+  --card-foreground: rgb(232 225 230); /* Light Mauve Gray */
+
+  /* Popover */
+  --popover: rgb(56 47 53); /* Dark Plum */
+  --popover-foreground: rgb(232 225 230); /* Light Mauve Gray */
+
+  /* Primary */
+  --primary: rgb(203 179 195); /* Bright Mauve */
+  --primary-foreground: rgb(41 34 39); /* Deep Eggplant */
+
+  /* Secondary */
+  --secondary: rgb(82 70 78); /* Medium Dark Plum */
+  --secondary-foreground: rgb(232 225 230); /* Light Mauve Gray */
+
+  /* Muted */
+  --muted: rgb(82 70 78); /* Medium Dark Plum */
+  --muted-foreground: rgb(168 156 164); /* Medium Grayish Mauve */
+
+  /* Accent */
+  --accent: rgb(82 70 78); /* Medium Dark Plum */
+  --accent-foreground: rgb(245 240 243); /* Very Light Mauve Gray */
+
+  /* Destructive */
+  --destructive: rgb(220 100 100); /* Brighter Red */
+  --destructive-foreground: rgb(255 255 255); /* White */
+
+  /* Interactive Elements */
+  --border: rgb(71 60 68); /* Dark Grayish Plum */
+  --input: rgb(71 60 68); /* Dark Grayish Plum */
+  --ring: rgb(203 179 195); /* Bright Mauve for focus */
+
+  /* Charts */
+  --chart-1: rgb(109 194 194); /* Brighter Teal */
+  --chart-2: rgb(227 185 105); /* Brighter Gold */
+  --chart-3: rgb(121 162 235); /* Brighter Blue */
+  --chart-4: rgb(142 201 142); /* Brighter Green */
+  --chart-5: rgb(242 148 129); /* Brighter Coral */
+  
+  /* Sidebar */
+  --sidebar: rgb(56 47 53); /* Dark Plum, same as card */
+  --sidebar-foreground: rgb(232 225 230); /* Light Mauve Gray */
+  --sidebar-primary: rgb(203 179 195); /* Bright Mauve */
+  --sidebar-primary-foreground: rgb(41 34 39); /* Deep Eggplant */
+  --sidebar-accent: rgb(82 70 78); /* Medium Dark Plum */
+  --sidebar-accent-foreground: rgb(232 225 230); /* Light Mauve Gray */
+  --sidebar-border: rgb(71 60 68); /* Dark Grayish Plum */
+  --sidebar-ring: rgb(203 179 195); /* Bright Mauve for focus */
 }
+
 
 @layer base {
   * {
