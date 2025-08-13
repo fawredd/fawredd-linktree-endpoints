@@ -2,13 +2,14 @@ import Image from "next/image"
 
 const HeroSection = () => {
   return (
-    <div className="relative w-full h-40 border-b-2 mb-8 md:mb-28">
+    <div className="relative w-full h-40 border-b-2 mb-12 md:mb-28">
       {/* Fondo de la sección Hero */}
       <Image
         src="/heroBackground.jpg"
         alt="Hero background"
-        layout="fill"
-        objectFit="cover"
+        className="object-cover w-full h-full"
+        width={400}
+        height={96}
       />
 
       {/* Superposición para el efecto borroso/oscuro */}

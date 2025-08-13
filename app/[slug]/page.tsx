@@ -1,26 +1,40 @@
-import Link from "next/link";
-import Image from "next/image";
+import {notFound} from "next/navigation";
+import { descripciones } from "@/assets/descriptions";
 
 interface HomePageProps {
   slug: string;
 }
 
 export default async function HomePage({ slug }: HomePageProps) {
-  let title, content
-  switch (slug) {
-    case "home":
-      return <h1>Welcome to the Home Page</h1>;
-    case "about":
-      return <h1>About Us</h1>;
-    case "contact":
-      return <h1>Contact Us</h1>;
-    default:
-      return <h1>Page Not Found</h1>;
-  }
+  const cleanSlug = sanitizeSlug(slug);
+  console.log(cleanSlug)
+  const {titulo, descripcion} = descripciones[cleanSlug] || {titulo:'',descripcion:''}
+  //if (!titulo) return notFound()
   return (
-    <div className="container mt-16 mx-auto relative">
-      <div className="absolute inset-0 bg-black opacity-20 rounded-2xl"></div>
-      <div className="mx-auto p-3 text-white"></div>
+  <div className="container mx-auto">
+    <div className="m-4 relative">
+      <div className="mx-auto p-3 text-white">
+        <h1 className="text-center text-3xl font-bold mb-6">{titulo}</h1>
+        <div className="text-justify">
+          {descripcion}
+        </div>
+      </div>
     </div>
-  );
+  </div>
+  )
 }
+
+function sanitizeSlug(paramSlug:string | undefined): string {
+    if (!paramSlug) {
+        return ''; // Handle empty or undefined input
+    }
+    const decodedSlug = decodeURIComponent(paramSlug);
+    const lowercasedSlug = decodedSlug.toLowerCase();
+    const sanitizedSlug = lowercasedSlug
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return sanitizedSlug;
+}
+

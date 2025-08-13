@@ -33,6 +33,7 @@ html {
         <HeroSection />
         <SocialLinks socialLinks={[
           {platform:'instagram',url:'https://www.instagram.com/mgd.expancion'},
+          {platform:'email',url:'https://www.instagram.com/mgd.expancion'},
           ]} />
         {children}
         <Toaster />
