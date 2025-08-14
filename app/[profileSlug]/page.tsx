@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from 'next/link'
-import {fetchProfileBySlug,fetchServicesByProfileId} from "@/actions/dbActions";
+import {fetchProfileBySlug,fetchServicesByProfileId, fetchSocialLinksByProfileId} from "@/actions/dbActions";
+
 
 import type { Metadata} from 'next'
+import SocialLinks from "@/components/social-links";
  
 type Props = {
   params: Promise<{ profileSlug: string }>
@@ -28,6 +30,7 @@ export default async  function HomePage({ params }: HomePageProps) {
   const profile = await fetchProfileBySlug(cleanProfileSlug)
   if (!profile) return notFound();
   const services = await fetchServicesByProfileId(profile.id);
+    const socialLinks = await fetchSocialLinksByProfileId(profile.id);
 
   const {titulo, descripcion} = {titulo:profile.title,descripcion:profile.description}
 
@@ -36,8 +39,8 @@ export default async  function HomePage({ params }: HomePageProps) {
     <div className="m-4 relative">
       <div className="mx-auto p-3">
         <div className="mx-auto m-4 p-2 whitespace-pre-wrap border rounded-lg">
-          <h1 className="text-center text-2xl font-bold mb-6 whitespace-pre-wrap">{titulo}</h1>
-          <p className="mx-auto text-center">{descripcion}</p>
+          <h1 className="text-center p-2 font-twinkle text-4xl font-bold whitespace-pre-wrap">{titulo}</h1>
+          <p className="mx-auto p-4 text-center font-twinkle text-2xl mb-2">{descripcion}</p>
         </div>
         <div className="text-justify whitespace-pre-wrap">
           
@@ -54,6 +57,7 @@ export default async  function HomePage({ params }: HomePageProps) {
             </ul>
           }
         </div>
+        <SocialLinks socialLinks={socialLinks} />
       </div>
     </div>
   </div>

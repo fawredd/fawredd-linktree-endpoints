@@ -15,8 +15,7 @@ export default async function HomePage() {
               fawredd linktr.ee endpoints
             </h1>
             <div className="text-justify  text-white">
-              Create your own linktr.ee endpoints websites with this Next.js
-              app.
+               This Next.js application allows you to easily create and manage a single, centralized landing page for all your important links
             </div>
           </div>
         </div>
