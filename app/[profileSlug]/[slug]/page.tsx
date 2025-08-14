@@ -18,8 +18,8 @@ export default async  function HomePage({ params }: HomePageProps) {
   return (
   <div className="container mx-auto">
     <div className="m-4 relative">
-      <div className="mx-auto p-3 text-white">
-        <h1 className="text-center text-3xl font-bold mb-6 whitespace-pre-wrap">{services.title}</h1>
+      <div className="mx-auto p-3">
+        <h1 className="text-center text-2xl font-bold mb-6 whitespace-pre-wrap">{services.title}</h1>
         <div className="text-justify whitespace-pre-wrap">
           {services.description}
         </div>

@@ -1,38 +1,25 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Bell, Share } from "lucide-react"
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Bell, Share } from "lucide-react";
+import Link from "next/link";
+import ShareButton from "./shareButton";
 
 interface HeroSectionProps {
-  backgroundImage?: string
-  profileImage?: string
-  profileName?: string
+  backgroundImage?: string;
+  profileImage?: string;
+  profileName?: string;
 }
 
-
-const HeroSection =({
+const HeroSection = ({
   backgroundImage = "/placeholder.svg",
   profileImage = "/placeholder.svg",
   profileName = "Profile",
 }: HeroSectionProps) => {
-
   return (
     <div className="relative w-full h-40 border-b-2 mb-12 md:mb-28">
       <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-20">
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full px-4 py-2"
-        >
-          <Bell className="w-4 h-4 mr-2" />
-          Subscribe
-        </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full p-2"
-        >
-          <Share className="w-4 h-4" />
-        </Button>
+        <SubscribeButton profileName={profileName} />
+        <ShareButton profileName={profileName} />
       </div>
       {/* Fondo de la sección Hero */}
       <Image
@@ -60,7 +47,21 @@ const HeroSection =({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default HeroSection;
+
+
+const SubscribeButton = ({ profileName }: { profileName: string }) => {
+  
+  return (
+    <Link
+      key={'SuscribeButtonKey'}
+      href={`https://www.instagram.com/${profileName}`}   // Replace with the actual profile link from DB   
+      className="flex flex-row items-center gap-1 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white/95 rounded-full px-2 py-1"
+    >
+      <Bell className="w-4 h-4" /><span className='text-sm'>Suscribe</span>
+    </Link>
+  );
+};
