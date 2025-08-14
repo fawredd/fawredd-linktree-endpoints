@@ -2,6 +2,22 @@ import { notFound } from "next/navigation";
 import Link from 'next/link'
 import {fetchProfileBySlug,fetchServicesByProfileId} from "@/actions/dbActions";
 
+import type { Metadata} from 'next'
+ 
+type Props = {
+  params: Promise<{ profileSlug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+ 
+export async function generateMetadata(
+  { params}: Props
+): Promise<Metadata> {
+  const { profileSlug } = await params
+  return {
+    title: `${profileSlug} home page`
+  }
+}
+
 interface HomePageProps {
   params: Promise<{ profileSlug:string}>
 }
