@@ -6,6 +6,7 @@ export interface Profile {
   id: number
   slug: string
   name: string
+  title: string | null
   description: string | null
   profile_image_url: string | null
   hero_image_url: string | null
@@ -31,6 +32,7 @@ export interface Service {
   description: string | null
   hero_image: string | null
   background_image: string | null
+  sortOrder: number
   is_active: boolean
   created_at: string
   updated_at: string
@@ -97,7 +99,7 @@ export async function getAllServicesByProfileId(profileId:number): Promise<Servi
     const result = await sql`
       SELECT * FROM services 
       WHERE is_active = true and "profileId" = ${profileId}
-      ORDER BY created_at DESC
+      ORDER BY "sortOrder" ASC
     `
     return result as Service[] | []
   } catch (error) {

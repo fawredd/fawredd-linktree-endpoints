@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import {fetchProfileBySlug,fetchServiceByProfileIdAndSlug} from "@/actions/dbActions";
+import {fetchProfileBySlug,fetchServiceByProfileIdAndSlug, fetchSocialLinksByProfileId} from "@/actions/dbActions";
 import type { Metadata } from 'next'
+import SocialLinks from "@/components/social-links";
  
 type Props = {
   params: Promise<{ profileSlug: string; slug: string }>
@@ -30,6 +31,7 @@ export default async  function HomePage({ params }: HomePageProps) {
   if (!profile) return notFound();
   const services = await fetchServiceByProfileIdAndSlug(profile.id, cleanServiceSlug);
   if (!services) notFound();
+  const socialLinks = await fetchSocialLinksByProfileId(profile.id);
 
   return (
   <div className="container mx-auto">
@@ -39,6 +41,7 @@ export default async  function HomePage({ params }: HomePageProps) {
         <div className="text-justify whitespace-pre-wrap">
           {services.description}
         </div>
+        <SocialLinks socialLinks={socialLinks} />
       </div>
     </div>
   </div>

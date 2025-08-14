@@ -1,6 +1,6 @@
 'use server'
 
-import { getAllProfiles, getProfileBySlug, getServiceByProfileIdAndSlug, getAllServicesByProfileId } from '@/lib/database'
+import { getAllProfiles, getProfileBySlug, getServiceByProfileIdAndSlug, getAllServicesByProfileId, getSocialLinks } from '@/lib/database'
 
 export async function fetchAllProfiles() {
   return await getAllProfiles()
@@ -16,4 +16,8 @@ export async function fetchServicesByProfileId(profileId:number) {
 
 export async function fetchServiceByProfileIdAndSlug(profileId:number, serviceSlug:string) {
   return await getServiceByProfileIdAndSlug(profileId, serviceSlug)
+}
+
+export async function fetchSocialLinksByProfileId(profileId:number) {
+  return await getSocialLinks(profileId)
 }

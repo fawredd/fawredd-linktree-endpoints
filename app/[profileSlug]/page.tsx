@@ -29,15 +29,18 @@ export default async  function HomePage({ params }: HomePageProps) {
   if (!profile) return notFound();
   const services = await fetchServicesByProfileId(profile.id);
 
-  const {titulo, descripcion} = {titulo:`Welcome to \n${profile.name}`,descripcion:profile.description}
+  const {titulo, descripcion} = {titulo:profile.title,descripcion:profile.description}
 
   return (
   <div className="container mx-auto">
     <div className="m-4 relative">
       <div className="mx-auto p-3">
-        <h1 className="text-center text-2xl font-bold mb-6 whitespace-pre-wrap">{titulo}</h1>
+        <div className="mx-auto m-4 p-2 whitespace-pre-wrap border rounded-lg">
+          <h1 className="text-center text-2xl font-bold mb-6 whitespace-pre-wrap">{titulo}</h1>
+          <p className="mx-auto text-center">{descripcion}</p>
+        </div>
         <div className="text-justify whitespace-pre-wrap">
-          {descripcion}
+          
           {services &&
             <ul key="servicesList">
             {services.map(
