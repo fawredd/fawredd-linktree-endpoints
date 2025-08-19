@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS public.social_links (
   url VARCHAR(500) NOT NULL,
   is_active BOOLEAN DEFAULT true,
   sort_order INTEGER DEFAULT 0,
-  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(profile_id, platform) -- Ensures a profile can only have one link per platform
 );
 
 -- Create indexes

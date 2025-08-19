@@ -1,11 +1,12 @@
 -- Create profiles table for Linktree-like functionality
 CREATE TABLE IF NOT EXISTS public.profiles (
   id SERIAL PRIMARY KEY,
-  slug VARCHAR(50) UNIQUE NOT NULL,
-  name VARCHAR(100) NOT NULL,
+  slug VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
   description TEXT,
-  profile_image_url VARCHAR(500),
-  background_image_url VARCHAR(500),
+  title VARCHAR(255),
+  profile_image_url TEXT,
+  hero_image_url TEXT,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
