@@ -39,8 +39,8 @@ export default async  function HomePage({ params }: HomePageProps) {
     <div className="m-4 relative">
       <div className="mx-auto p-3">
         <div className="mx-auto m-4 p-2 whitespace-pre-wrap border rounded-lg">
-          <h1 className="text-center p-2 font-twinkle text-4xl font-bold whitespace-pre-wrap">{titulo}</h1>
-          <p className="mx-auto p-4 text-center font-twinkle text-2xl mb-2">{descripcion}</p>
+          <h1 className="text-center p-2 text-4xl font-bold whitespace-pre-wrap">{titulo}</h1>
+          <p className="mx-auto p-4 text-center text-2xl mb-2">{descripcion}</p>
         </div>
         <div className="text-justify whitespace-pre-wrap">
           
