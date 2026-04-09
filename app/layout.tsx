@@ -11,25 +11,29 @@ export const metadata: Metadata = {
   generator: "fawredd",
 }
 
+import { ClerkProvider } from "@clerk/nextjs"
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
-      <head>
-        <style>{`
-          html {
-            font-family: ${GeistSans.style.fontFamily};
-            --font-sans: ${GeistSans.variable};
-            --font-mono: ${GeistMono.variable};
-          }
-        `}</style>
-      </head>
-      <body className="font-sans antialiased">
+    <ClerkProvider>
+      <html lang="es">
+        <head>
+          <style>{`
+            html {
+              font-family: ${GeistSans.style.fontFamily};
+              --font-sans: ${GeistSans.variable};
+              --font-mono: ${GeistMono.variable};
+            }
+          `}</style>
+        </head>
+        <body className="font-sans antialiased">
           {children}
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
