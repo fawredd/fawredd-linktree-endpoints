@@ -313,6 +313,41 @@ export async function isAuthorized(profileId: number, clerkId: string, email?: s
   }
 }
 
+export async function createProfile(
+  clerkId: string,
+  name: string,
+  slug: string
+): Promise<{ success: true; profileId: number } | { success: false; error: 'name_exists' | 'slug_exists' | 'db_error' }> {
+  try {
+    // Check for duplicate name (case-insensitive, global)
+    const nameCheck = await sql`
+      SELECT id FROM profiles WHERE LOWER(name) = LOWER(${name}) AND is_active = true LIMIT 1
+    `
+    if (nameCheck.length > 0) {
+      return { success: false, error: 'name_exists' }
+    }
+
+    // Check for duplicate slug (exact, global)
+    const slugCheck = await sql`
+      SELECT id FROM profiles WHERE slug = ${slug} AND is_active = true LIMIT 1
+    `
+    if (slugCheck.length > 0) {
+      return { success: false, error: 'slug_exists' }
+    }
+
+    const result = await sql`
+      INSERT INTO profiles (clerk_id, name, slug, is_active, created_at, updated_at)
+      VALUES (${clerkId}, ${name}, ${slug}, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      RETURNING id
+    `
+    const profileId = (result[0] as { id: number }).id
+    return { success: true, profileId }
+  } catch (error) {
+    console.error('Error creating profile:', error)
+    return { success: false, error: 'db_error' }
+  }
+}
+
 export async function isProfileOwner(profileId: number, clerkId: string): Promise<boolean> {
   try {
     const result = await sql`

@@ -19,6 +19,7 @@
 - [x] [TASK-AUTH-006] Security Review: Multi-user Permissions (Security) - **DONE**
 - [x] [TASK-AUTH-007] Implement Multi-user Database Schema & Logic (Backend) - **DONE**
 - [x] [TASK-AUTH-008] Implement Multi-user Management UI (Frontend) - **DONE**
+- [x] [TASK-DASH-009] Implement Create New Profile Functionality (Backend + Frontend) - **DONE**
 
 ## Priority 0: Critical Fixes
 - [x] [TASK-TRIAGE-001] Triage: CI Failure — Build Check (PM) - **DONE**

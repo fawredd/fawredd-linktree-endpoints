@@ -3,7 +3,7 @@ import { getAllProfiles } from "@/lib/database";
 import DashboardShell from "@/components/dashboard-shell";
 import Link from "next/link";
 import { Plus, ExternalLink, MoreVertical, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import CreateProfileModal from "@/components/create-profile-modal";
 
 export default async function DashboardPage() {
     const { userId } = await auth();
@@ -24,10 +24,7 @@ export default async function DashboardPage() {
                         <h2 className="text-3xl font-bold tracking-tight text-white mb-1">Your Linktree Profiles</h2>
                         <p className="text-slate-400">Manage your profiles and their associated links.</p>
                     </div>
-                    <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold">
-                        <Plus size={18} className="mr-2" />
-                        Create New Profile
-                    </Button>
+                    <CreateProfileModal trigger="primary" />
                 </div>
 
                 {profiles.length === 0 ? (
@@ -39,9 +36,7 @@ export default async function DashboardPage() {
                         <p className="text-slate-400 max-w-sm mx-auto">
                             You haven&apos;t created any Linktree profiles yet. Get started by creating your first one.
                         </p>
-                        <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
-                            Set up your first profile
-                        </Button>
+                        <CreateProfileModal trigger="outline" />
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
