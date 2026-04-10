@@ -19,6 +19,8 @@
 ## Priority 0: Critical Fixes
 - [x] [TASK-TRIAGE-001] Triage: CI Failure — Build Check (PM) - **DONE**
 - [x] [TASK-FIX-001] Resolve CI Failures (Lint, Typecheck, Build) (Full Stack) - **DONE**
+- [x] [TASK-FIX-002] Fix Profile Update Persistence Issue (Backend) - **DONE**
+
 
 ## Status Keys
 - `DONE`: Completed and QA verified.

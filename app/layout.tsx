@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import '@fontsource/twinkle-star';
 import "./globals.css"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "fawredd linktr.ee endpoints websites",
@@ -32,6 +33,7 @@ export default function RootLayout({
         </head>
         <body className="font-sans antialiased">
           {children}
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

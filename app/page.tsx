@@ -18,10 +18,10 @@ export default async function HomePage() {
         <div className="m-4 relative">
           <div className="mx-auto p-3 text-center">
             <h1 className="text-2xl font-bold mb-6 text-white">
-              fawredd linktr.ee endpoints
+              fawredd endpoints
             </h1>
-            <p className="text-slate-400 mb-8 max-w-lg mx-auto">
-              This Next.js application allows you to easily create and manage a single, centralized landing page for all your important links.
+            <p className=" mb-8 max-w-lg mx-auto">
+              This application allows you to easily create and manage a single, centralized landing page for all your important links.
             </p>
 
             {userId ? (

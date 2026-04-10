@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2, GripVertical, Save, ChevronDown, ChevronUp, Link as LinkIcon, Instagram, Twitter, Github, Linkedin, Youtube, Globe } from 'lucide-react';
+import { Hourglass ,Plus, Trash2, GripVertical, Save, ChevronDown, ChevronUp, Link as LinkIcon, Instagram, Twitter, Github, Linkedin, Youtube, Globe } from 'lucide-react';
 
 import {
     DndContext,
@@ -191,7 +191,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Configuration Column */}
             <div className="space-y-8">
-                <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-bold text-white">Profile Settings</h3>
                         <Button
@@ -199,7 +199,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                             disabled={isSaving}
                             className="bg-indigo-600 hover:bg-indigo-500"
                         >
-                            {isSaving ? 'Saving...' : <><Save size={16} className="mr-2" /> Save Changes</>}
+                            {isSaving ? <Hourglass size={16} /> : <Save size={16} />}
                         </Button>
                     </div>
 
@@ -238,8 +238,8 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 </section>
 
                 <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold text-white">Social Links</h3>
+                    <div className="flex flex-col md:flex-row items-center justify-between">
+                        <h3 className="text-xl font-bold text-white mb-4 md:mb-0">Social Links</h3>
                         <Button variant="outline" size="sm" onClick={addSocialLink} className="border-slate-700">
                             <Plus size={16} className="mr-2" /> Add Social
                         </Button>
@@ -249,10 +249,9 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                         {socialLinks.map((social) => (
                             <div
                                 key={social.id}
-                                className="flex items-center gap-4 bg-slate-800/50 border border-slate-700/50 p-4 rounded-xl group hover:border-indigo-500/30 transition-colors"
+                                className="flex flex-col md:flex-row items-center gap-2 md:gap-4 bg-slate-800/50 border border-slate-700/50 p-4 md:p-8 rounded-xl group hover:border-indigo-500/30 transition-colors"
                             >
-                                <div className="flex-1 flex gap-3">
-                                    <div className="w-32">
+                                <div className="flex-1 w-full flex flex-col md:flex-row gap-1">
                                         <select
                                             value={social.platform}
                                             onChange={(e) => updateSocialField(social.id, 'platform', e.target.value)}
@@ -265,7 +264,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                                             <option value="youtube">YouTube</option>
                                             <option value="website">Website</option>
                                         </select>
-                                    </div>
                                     <Input
                                         value={social.url}
                                         onChange={(e) => {
@@ -273,7 +271,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                                             setSocialLinks(socialLinks.map(s => s.id === social.id ? { ...s, url: newVal } : s));
                                         }}
                                         onBlur={(e) => updateSocialField(social.id, 'url', e.target.value)}
-                                        className="bg-slate-800 border-slate-700"
+                                        className="w-full bg-slate-800 border-slate-700"
                                         placeholder="https://..."
                                     />
                                 </div>
@@ -431,7 +429,7 @@ function SortableServiceItem({
             style={style}
             className={`bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden group hover:border-indigo-500/30 transition-colors ${isDragging ? 'shadow-2xl ring-2 ring-indigo-500/50' : ''}`}
         >
-            <div className="flex items-center gap-4 p-4">
+            <div className="flex items-center gap-1 md:gap2 p-2 md:p-4">
                 <div
                     {...attributes}
                     {...listeners}
@@ -464,7 +462,7 @@ function SortableServiceItem({
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center md:gap-2">
                     <Button
                         variant="ghost"
                         size="icon"

@@ -117,19 +117,19 @@ export async function getAllServicesByProfileId(profileId: number): Promise<Serv
 
 export async function updateProfile(id: number, data: Partial<Profile>, clerkId: string): Promise<boolean> {
   try {
-    // Basic implementation of dynamic update
-    const fields = Object.keys(data).filter(k => k !== 'id' && k !== 'clerk_id' && k !== 'created_at');
-    if (fields.length === 0) return true;
-
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Profile>])}`).join(', ');
-
-    // Using simple approach since we don't have a query builder
-    await sql.unsafe(`
+    await sql`
       UPDATE profiles 
-      SET ${setClause}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id} AND clerk_id = '${clerkId}'
-    `);
-
+      SET 
+        name = CASE WHEN ${data.name !== undefined} THEN ${data.name} ELSE name END,
+        title = CASE WHEN ${data.title !== undefined} THEN ${data.title} ELSE title END,
+        description = CASE WHEN ${data.description !== undefined} THEN ${data.description} ELSE description END,
+        slug = CASE WHEN ${data.slug !== undefined} THEN ${data.slug} ELSE slug END,
+        profile_image_url = CASE WHEN ${data.profile_image_url !== undefined} THEN ${data.profile_image_url} ELSE profile_image_url END,
+        hero_image_url = CASE WHEN ${data.hero_image_url !== undefined} THEN ${data.hero_image_url} ELSE hero_image_url END,
+        is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id} AND clerk_id = ${clerkId}
+    `;
     return true;
   } catch (error) {
     console.error("Error updating profile:", error);
@@ -164,16 +164,19 @@ export async function deleteService(id: number, profileId: number): Promise<bool
 
 export async function updateService(id: number, profileId: number, data: Partial<Omit<Service, 'id' | 'created_at' | 'updated_at' | 'profileId'>>): Promise<boolean> {
   try {
-    const fields = Object.keys(data);
-    if (fields.length === 0) return true;
-
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Omit<Service, 'id' | 'created_at' | 'updated_at' | 'profileId'>>])}`).join(', ');
-
-    await sql.unsafe(`
+    await sql`
       UPDATE services 
-      SET ${setClause}, updated_at = CURRENT_TIMESTAMP
+      SET 
+        slug = CASE WHEN ${data.slug !== undefined} THEN ${data.slug} ELSE slug END,
+        title = CASE WHEN ${data.title !== undefined} THEN ${data.title} ELSE title END,
+        description = CASE WHEN ${data.description !== undefined} THEN ${data.description} ELSE description END,
+        hero_image = CASE WHEN ${data.hero_image !== undefined} THEN ${data.hero_image} ELSE hero_image END,
+        background_image = CASE WHEN ${data.background_image !== undefined} THEN ${data.background_image} ELSE background_image END,
+        "sortOrder" = CASE WHEN ${data.sortOrder !== undefined} THEN ${data.sortOrder} ELSE "sortOrder" END,
+        is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
+        updated_at = CURRENT_TIMESTAMP
       WHERE id = ${id} AND "profileId" = ${profileId}
-    `);
+    `;
     return true;
   } catch (error) {
     console.error("Error updating service:", error);
@@ -216,16 +219,15 @@ export async function addSocialLink(profileId: number, platform: string, url: st
 
 export async function updateSocialLink(id: number, profileId: number, data: Partial<Omit<SocialLink, 'id' | 'profile_id' | 'created_at'>>): Promise<boolean> {
   try {
-    const fields = Object.keys(data);
-    if (fields.length === 0) return true;
-
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Omit<SocialLink, 'id' | 'profile_id' | 'created_at'>>])}`).join(', ');
-
-    await sql.unsafe(`
+    await sql`
       UPDATE social_links 
-      SET ${setClause}
+      SET 
+        platform = CASE WHEN ${data.platform !== undefined} THEN ${data.platform} ELSE platform END,
+        url = CASE WHEN ${data.url !== undefined} THEN ${data.url} ELSE url END,
+        is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
+        sort_order = CASE WHEN ${data.sort_order !== undefined} THEN ${data.sort_order} ELSE sort_order END
       WHERE id = ${id} AND profile_id = ${profileId}
-    `);
+    `;
     return true;
   } catch (error) {
     console.error("Error updating social link:", error);

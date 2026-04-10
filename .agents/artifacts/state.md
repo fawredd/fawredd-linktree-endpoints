@@ -33,7 +33,8 @@
 - [x] Implement Responsive Dashboard UI (Mobile First)
 - [x] Implement Drag & Drop sorting for profile links
 - [x] Resolve CI Quality Gate (Lint, Typecheck, Build)
+- [x] Fix Profile Update Persistence Issue (Parameterized Queries)
 
 ## Current Context
-Integrated Clerk for authentication and user management. Launched the Admin Dashboard for profile and service orchestration. Users can now fully customize service content (descriptions, images) and manage social links. The dashboard is now fully responsive and supports mobile-first design. Link sorting via drag-and-drop is now functional in the profile editor. Validated project quality with a successful `pnpm run build` after fixing lint, typecheck, and runtime directive errors.
+Integrated Clerk for authentication and user management. Launched the Admin Dashboard for profile and service orchestration. Users can now fully customize service content (descriptions, images) and manage social links. The dashboard is now fully responsive and supports mobile-first design. Link sorting via drag-and-drop is now functional in the profile editor. Validated project quality with a successful `pnpm run build` after fixing lint, typecheck, and runtime directive errors. Fixed a critical bug where profile updates were not persisting due to incorrect SQL syntax in the database layer. All updates now use safe, parameterized queries.
 
