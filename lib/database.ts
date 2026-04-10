@@ -121,7 +121,7 @@ export async function updateProfile(id: number, data: Partial<Profile>, clerkId:
     const fields = Object.keys(data).filter(k => k !== 'id' && k !== 'clerk_id' && k !== 'created_at');
     if (fields.length === 0) return true;
 
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify((data as any)[f])}`).join(', ');
+    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Profile>])}`).join(', ');
 
     // Using simple approach since we don't have a query builder
     await sql.unsafe(`
@@ -167,7 +167,7 @@ export async function updateService(id: number, profileId: number, data: Partial
     const fields = Object.keys(data);
     if (fields.length === 0) return true;
 
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify((data as any)[f])}`).join(', ');
+    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Omit<Service, 'id' | 'created_at' | 'updated_at' | 'profileId'>>])}`).join(', ');
 
     await sql.unsafe(`
       UPDATE services 
@@ -201,7 +201,7 @@ export async function reorderServices(profileId: number, items: { id: number, so
 export async function addSocialLink(profileId: number, platform: string, url: string): Promise<boolean> {
   try {
     const nextOrder = await sql`SELECT COALESCE(MAX(sort_order), -1) + 1 as next_order FROM social_links WHERE profile_id = ${profileId}`;
-    const sortOrder = (nextOrder[0] as any).next_order;
+    const sortOrder = (nextOrder[0] as { next_order: number }).next_order;
 
     await sql`
       INSERT INTO social_links (profile_id, platform, url, sort_order, is_active)
@@ -219,7 +219,7 @@ export async function updateSocialLink(id: number, profileId: number, data: Part
     const fields = Object.keys(data);
     if (fields.length === 0) return true;
 
-    const setClause = fields.map(f => `"${f}" = ${JSON.stringify((data as any)[f])}`).join(', ');
+    const setClause = fields.map(f => `"${f}" = ${JSON.stringify(data[f as keyof Partial<Omit<SocialLink, 'id' | 'profile_id' | 'created_at'>>])}`).join(', ');
 
     await sql.unsafe(`
       UPDATE social_links 

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, Link2, Settings, User, Menu, X } from "lucide-react";
@@ -50,7 +52,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
             </nav>
 
             <div className="p-4 border-t border-slate-800 flex items-center gap-3">
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
                 <div className="text-sm font-medium text-slate-400">Account</div>
             </div>
         </>
@@ -102,7 +104,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
                             Alpha
                         </div>
                         <div className="lg:hidden scale-90">
-                            <UserButton afterSignOutUrl="/" />
+                            <UserButton />
                         </div>
                     </div>
                 </header>

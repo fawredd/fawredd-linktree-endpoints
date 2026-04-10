@@ -35,7 +35,7 @@ export default async function DashboardPage() {
                         </div>
                         <h3 className="text-xl font-semibold text-slate-200">No profiles found</h3>
                         <p className="text-slate-400 max-w-sm mx-auto">
-                            You haven't created any Linktree profiles yet. Get started by creating your first one.
+                            You haven&apos;t created any Linktree profiles yet. Get started by creating your first one.
                         </p>
                         <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
                             Set up your first profile

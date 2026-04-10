@@ -75,7 +75,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
             });
             if (success) toast.success('Profile updated successfully');
             else toast.error('Failed to update profile');
-        } catch (error) {
+        } catch {
             toast.error('Error saving profile');
         } finally {
             setIsSaving(false);
@@ -100,7 +100,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 // We should ideally get the new list from the action or revalidate
                 window.location.reload();
             }
-        } catch (error) {
+        } catch {
             toast.error('Failed to add link');
         }
     };
@@ -113,16 +113,16 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 setServices(services.filter(s => s.id !== id));
                 toast.success('Link deleted');
             }
-        } catch (error) {
+        } catch {
             toast.error('Error deleting link');
         }
     };
 
-    const updateServiceField = async (id: number, field: string, value: any) => {
+    const updateServiceField = async (id: number, field: string, value: string | number | boolean | null) => {
         try {
             await updateServiceAction(id, profile.id, { [field]: value });
             setServices(services.map(s => s.id === id ? { ...s, [field]: value } : s));
-        } catch (error) {
+        } catch {
             toast.error('Failed to update');
         }
     };
@@ -146,7 +146,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
             try {
                 await reorderServicesAction(profile.id, reorderItems);
                 toast.success('Order updated');
-            } catch (error) {
+            } catch {
                 toast.error('Failed to save order');
             }
         }
@@ -159,7 +159,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 toast.success('Social link added');
                 window.location.reload();
             }
-        } catch (error) {
+        } catch {
             toast.error('Failed to add social link');
         }
     };
@@ -172,16 +172,16 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 setSocialLinks(socialLinks.filter(s => s.id !== id));
                 toast.success('Social link deleted');
             }
-        } catch (error) {
+        } catch {
             toast.error('Error deleting social link');
         }
     };
 
-    const updateSocialField = async (id: number, field: string, value: any) => {
+    const updateSocialField = async (id: number, field: string, value: string | number | boolean | null) => {
         try {
             await updateSocialLinkAction(id, profile.id, { [field]: value });
             setSocialLinks(socialLinks.map(s => s.id === id ? { ...s, [field]: value } : s));
-        } catch (error) {
+        } catch {
             toast.error('Failed to update');
         }
     };
@@ -394,7 +394,7 @@ interface SortableServiceItemProps {
     service: Service;
     activeServiceTab: number | null;
     setActiveServiceTab: (id: number | null) => void;
-    updateServiceField: (id: number, field: string, value: any) => void;
+    updateServiceField: (id: number, field: string, value: string | number | boolean | null) => void;
     deleteService: (id: number) => void;
     setServices: React.Dispatch<React.SetStateAction<Service[]>>;
     services: Service[];
