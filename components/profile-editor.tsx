@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Profile, Service, SocialLink } from '@/lib/database';
+import { Profile, Service, SocialLink, ProfileManager } from '@/lib/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Hourglass ,Plus, Trash2, GripVertical, Save, ChevronDown, ChevronUp, Link as LinkIcon, Instagram, Twitter, Github, Linkedin, Youtube, Globe } from 'lucide-react';
+import {
+    Hourglass, Plus, Trash2, GripVertical, Save,
+    ChevronDown, ChevronUp, Link as LinkIcon,
+    Instagram, Twitter, Github, Linkedin, Youtube, Globe, Users
+} from 'lucide-react';
 
 import {
     DndContext,
@@ -28,12 +32,6 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { toast } from 'sonner';
 
-interface ProfileEditorProps {
-    profile: Profile;
-    services: Service[];
-    socialLinks: SocialLink[];
-}
-
 import {
     editProfileAction,
     addServiceAction,
@@ -42,18 +40,41 @@ import {
     addSocialLinkAction,
     updateSocialLinkAction,
     deleteSocialLinkAction,
-    reorderServicesAction
+    reorderServicesAction,
+    addCollaboratorAction,
+    removeCollaboratorAction
 } from "@/actions/dashboardActions";
 
-export default function ProfileEditor({ profile, services: initialServices, socialLinks: initialSocialLinks }: ProfileEditorProps) {
+interface ProfileEditorProps {
+    profile: Profile;
+    services: Service[];
+    socialLinks: SocialLink[];
+    isOwner: boolean;
+    initialCollaborators: ProfileManager[];
+}
+
+export default function ProfileEditor({
+    profile,
+    services: initialServices,
+    socialLinks: initialSocialLinks,
+    isOwner,
+    initialCollaborators
+}: ProfileEditorProps) {
     const [profileData, setProfileData] = useState(profile);
     const [services, setServices] = useState(initialServices);
     const [socialLinks, setSocialLinks] = useState(initialSocialLinks);
+    const [collaborators, setCollaborators] = useState(initialCollaborators);
+    const [newCollaboratorEmail, setNewCollaboratorEmail] = useState('');
     const [activeServiceTab, setActiveServiceTab] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -97,7 +118,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
             const success = await addServiceAction(profile.id, data);
             if (success) {
                 toast.success('Link added');
-                // We should ideally get the new list from the action or revalidate
                 window.location.reload();
             }
         } catch {
@@ -137,7 +157,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
             const newServices = arrayMove(services, oldIndex, newIndex);
             setServices(newServices);
 
-            // Persist the new order
             const reorderItems = newServices.map((service, index) => ({
                 id: service.id,
                 sortOrder: index
@@ -186,6 +205,42 @@ export default function ProfileEditor({ profile, services: initialServices, soci
         }
     };
 
+    const addCollaborator = async () => {
+        if (!newCollaboratorEmail || !newCollaboratorEmail.includes('@')) {
+            toast.error('Please enter a valid email');
+            return;
+        }
+
+        setIsAddingCollaborator(true);
+        try {
+            const success = await addCollaboratorAction(profile.id, newCollaboratorEmail);
+            if (success) {
+                toast.success('Collaborator added');
+                setNewCollaboratorEmail('');
+                window.location.reload();
+            } else {
+                toast.error('Failed to add collaborator');
+            }
+        } catch (err: unknown) {
+            const error = err as Error;
+            toast.error(error?.message || 'Error adding collaborator');
+        } finally {
+            setIsAddingCollaborator(false);
+        }
+    };
+
+    const removeCollaborator = async (id: number) => {
+        if (!confirm('Remove this collaborator?')) return;
+        try {
+            const success = await removeCollaboratorAction(id, profile.id);
+            if (success) {
+                setCollaborators(collaborators.filter(c => c.id !== id));
+                toast.success('Collaborator removed');
+            }
+        } catch {
+            toast.error('Error removing collaborator');
+        }
+    };
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -237,6 +292,56 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                     </div>
                 </section>
 
+                {isOwner && (
+                    <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl shadow-indigo-500/5">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-bold text-white">Collaborators</h3>
+                            <Users size={20} className="text-indigo-500" />
+                        </div>
+
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Collaborator Email"
+                                value={newCollaboratorEmail}
+                                onChange={(e) => setNewCollaboratorEmail(e.target.value)}
+                                className="bg-slate-800 border-slate-700 focus:ring-indigo-500"
+                            />
+                            <Button
+                                onClick={addCollaborator}
+                                disabled={isAddingCollaborator}
+                                className="bg-indigo-600 hover:bg-indigo-500 whitespace-nowrap px-6"
+                            >
+                                {isAddingCollaborator ? <Hourglass size={16} className="animate-spin" /> : <Plus size={16} className="mr-2" />}
+                                Add
+                            </Button>
+                        </div>
+
+                        <div className="space-y-3 pt-2">
+                            {collaborators.map((collab) => (
+                                <div key={collab.id} className="flex items-center justify-between p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl group hover:border-indigo-500/30 transition-all">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-slate-700 group-hover:bg-indigo-900/40 flex items-center justify-center text-xs font-bold text-slate-300 group-hover:text-indigo-300 transition-colors">
+                                            {collab.email.charAt(0).toUpperCase()}
+                                        </div>
+                                        <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{collab.email}</span>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-slate-500 hover:text-red-400 hover:bg-red-400/10"
+                                        onClick={() => removeCollaborator(collab.id)}
+                                    >
+                                        <Trash2 size={16} />
+                                    </Button>
+                                </div>
+                            ))}
+                            {collaborators.length === 0 && (
+                                <p className="text-center text-slate-500 text-xs py-2 italic">No collaborators yet. Add someone by email.</p>
+                            )}
+                        </div>
+                    </section>
+                )}
+
                 <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
                     <div className="flex flex-col md:flex-row items-center justify-between">
                         <h3 className="text-xl font-bold text-white mb-4 md:mb-0">Social Links</h3>
@@ -252,18 +357,18 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                                 className="flex flex-col md:flex-row items-center gap-2 md:gap-4 bg-slate-800/50 border border-slate-700/50 p-4 md:p-8 rounded-xl group hover:border-indigo-500/30 transition-colors"
                             >
                                 <div className="flex-1 w-full flex flex-col md:flex-row gap-1">
-                                        <select
-                                            value={social.platform}
-                                            onChange={(e) => updateSocialField(social.id, 'platform', e.target.value)}
-                                            className="w-full h-10 px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                        >
-                                            <option value="instagram">Instagram</option>
-                                            <option value="twitter">Twitter</option>
-                                            <option value="github">Github</option>
-                                            <option value="linkedin">LinkedIn</option>
-                                            <option value="youtube">YouTube</option>
-                                            <option value="website">Website</option>
-                                        </select>
+                                    <select
+                                        value={social.platform}
+                                        onChange={(e) => updateSocialField(social.id, 'platform', e.target.value)}
+                                        className="w-full h-10 px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                        <option value="instagram">Instagram</option>
+                                        <option value="twitter">Twitter</option>
+                                        <option value="github">Github</option>
+                                        <option value="linkedin">LinkedIn</option>
+                                        <option value="youtube">YouTube</option>
+                                        <option value="website">Website</option>
+                                    </select>
                                     <Input
                                         value={social.url}
                                         onChange={(e) => {
@@ -278,7 +383,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-slate-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="text-slate-400 hover:text-red-400"
                                     onClick={() => deleteSocialLink(social.id)}
                                 >
                                     <Trash2 size={18} />
@@ -294,7 +399,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                 <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
                     <div className="flex items-center justify-between">
                         <h3 className="text-xl font-bold text-white">Your Links</h3>
-
                         <Button variant="outline" size="sm" onClick={addService} className="border-slate-700">
                             <Plus size={16} className="mr-2" /> Add Link
                         </Button>
@@ -328,7 +432,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                             </div>
                         </SortableContext>
                     </DndContext>
-
                 </section>
             </div>
 
@@ -343,7 +446,7 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                             <div className="text-center space-y-4">
                                 <div className="w-20 h-20 rounded-full bg-indigo-500/20 mx-auto border-2 border-indigo-500/30 flex items-center justify-center overflow-hidden">
                                     {profileData.profile_image_url ? (
-                                        <img src={profileData.profile_image_url} className="w-full h-full object-cover" />
+                                        <img src={profileData.profile_image_url} className="w-full h-full object-cover" alt="Profile" />
                                     ) : (
                                         <span className="text-2xl font-bold text-indigo-400">{profileData.name ? profileData.name.charAt(0) : 'U'}</span>
                                     )}
@@ -379,7 +482,6 @@ export default function ProfileEditor({ profile, services: initialServices, soci
                                     </div>
                                 ))}
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -474,7 +576,7 @@ function SortableServiceItem({
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="text-slate-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-slate-400 hover:text-red-400"
                         onClick={() => deleteService(service.id)}
                     >
                         <Trash2 size={18} />

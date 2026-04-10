@@ -40,6 +40,13 @@ export interface Service {
   profileId: number
 }
 
+export interface ProfileManager {
+  id: number
+  profile_id: number
+  email: string
+  created_at: string
+}
+
 export async function getProfileBySlug(slug: string): Promise<Profile | null> {
   try {
     const result = await sql`
@@ -68,13 +75,16 @@ export async function getSocialLinks(profileId: number): Promise<SocialLink[]> {
   }
 }
 
-export async function getAllProfiles(clerkId?: string): Promise<Profile[]> {
+export async function getAllProfiles(clerkId?: string, email?: string): Promise<Profile[]> {
   try {
     const result = clerkId
       ? await sql`
-          SELECT * FROM profiles 
-          WHERE clerk_id = ${clerkId} AND is_active = true
-          ORDER BY created_at DESC
+          SELECT p.* FROM profiles p
+          LEFT JOIN profile_managers pm ON p.id = pm.profile_id
+          WHERE (p.clerk_id = ${clerkId} OR pm.email = ${email || ''})
+          AND p.is_active = true
+          GROUP BY p.id
+          ORDER BY p.created_at DESC
         `
       : await sql`
           SELECT * FROM profiles 
@@ -115,7 +125,7 @@ export async function getAllServicesByProfileId(profileId: number): Promise<Serv
   }
 }
 
-export async function updateProfile(id: number, data: Partial<Profile>, clerkId: string): Promise<boolean> {
+export async function updateProfile(id: number, data: Partial<Profile>, clerkId: string, email?: string): Promise<boolean> {
   try {
     await sql`
       UPDATE profiles 
@@ -128,7 +138,7 @@ export async function updateProfile(id: number, data: Partial<Profile>, clerkId:
         hero_image_url = CASE WHEN ${data.hero_image_url !== undefined} THEN ${data.hero_image_url} ELSE hero_image_url END,
         is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id} AND clerk_id = ${clerkId}
+      WHERE id = ${id} AND (clerk_id = ${clerkId} OR id IN (SELECT profile_id FROM profile_managers WHERE email = ${email || ''}))
     `;
     return true;
   } catch (error) {
@@ -244,6 +254,74 @@ export async function deleteSocialLink(id: number, profileId: number): Promise<b
   } catch (error) {
     console.error("Error deleting social link:", error);
     return false;
+  }
+}
+
+// Collaborator functions
+export async function getCollaborators(profileId: number): Promise<ProfileManager[]> {
+  try {
+    const result = await sql`
+      SELECT * FROM profile_managers 
+      WHERE profile_id = ${profileId} 
+      ORDER BY created_at ASC
+    `
+    return result as ProfileManager[]
+  } catch (error) {
+    console.error("Error fetching collaborators:", error)
+    return []
+  }
+}
+
+export async function addCollaborator(profileId: number, email: string): Promise<boolean> {
+  try {
+    await sql`
+      INSERT INTO profile_managers (profile_id, email)
+      VALUES (${profileId}, ${email})
+      ON CONFLICT (profile_id, email) DO NOTHING
+    `
+    return true
+  } catch (error) {
+    console.error("Error adding collaborator:", error)
+    return false
+  }
+}
+
+export async function removeCollaborator(id: number, profileId: number): Promise<boolean> {
+  try {
+    await sql`
+      DELETE FROM profile_managers WHERE id = ${id} AND profile_id = ${profileId}
+    `
+    return true
+  } catch (error) {
+    console.error("Error removing collaborator:", error)
+    return false
+  }
+}
+
+export async function isAuthorized(profileId: number, clerkId: string, email?: string): Promise<boolean> {
+  try {
+    const result = await sql`
+      SELECT 1 FROM profiles 
+      WHERE id = ${profileId} AND clerk_id = ${clerkId}
+      UNION
+      SELECT 1 FROM profile_managers 
+      WHERE profile_id = ${profileId} AND email = ${email || ''}
+    `
+    return result.length > 0
+  } catch {
+    return false
+  }
+}
+
+export async function isProfileOwner(profileId: number, clerkId: string): Promise<boolean> {
+  try {
+    const result = await sql`
+      SELECT 1 FROM profiles 
+      WHERE id = ${profileId} AND clerk_id = ${clerkId}
+    `
+    return result.length > 0
+  } catch {
+    return false
   }
 }
 

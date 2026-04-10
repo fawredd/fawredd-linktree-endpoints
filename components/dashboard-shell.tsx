@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, Link2, Settings, User, Menu, X } from "lucide-react";
 import Link from 'next/link';
@@ -11,17 +11,22 @@ interface DashboardShellProps {
     children: React.ReactNode;
 }
 
+const navLinks = [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/dashboard/profiles', label: 'My Profiles', icon: User },
+    { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+];
+
 export default function DashboardShell({ children }: DashboardShellProps) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const isActive = (path: string) => pathname === path;
-
-    const navLinks = [
-        { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/dashboard/profiles', label: 'My Profiles', icon: User },
-        { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-    ];
 
     const SidebarContent = () => (
         <>
@@ -52,7 +57,11 @@ export default function DashboardShell({ children }: DashboardShellProps) {
             </nav>
 
             <div className="p-4 border-t border-slate-800 flex items-center gap-3">
-                <UserButton />
+                {mounted ? (
+                    <UserButton />
+                ) : (
+                    <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />
+                )}
                 <div className="text-sm font-medium text-slate-400">Account</div>
             </div>
         </>
@@ -104,7 +113,11 @@ export default function DashboardShell({ children }: DashboardShellProps) {
                             Alpha
                         </div>
                         <div className="lg:hidden scale-90">
-                            <UserButton />
+                            {mounted ? (
+                                <UserButton />
+                            ) : (
+                                <div className="w-8 h-8 rounded-full bg-slate-800 animate-pulse" />
+                            )}
                         </div>
                     </div>
                 </header>

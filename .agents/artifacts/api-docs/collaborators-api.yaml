@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: Collaborators API
+  version: 1.0.0
+  description: API for managing profile collaborators (multi-user management).
+
+paths:
+  /api/profiles/{profileId}/collaborators:
+    get:
+      summary: List all collaborators for a profile
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of collaborator emails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    email:
+                      type: string
+                    created_at:
+                      type: string
+                      format: date-time
+    post:
+      summary: Add a collaborator to a profile
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '201':
+          description: Collaborator added successfully
+        '403':
+          description: Forbidden (only owner can add collaborators)
+
+  /api/profiles/{profileId}/collaborators/{collaboratorId}:
+    delete:
+      summary: Remove a collaborator from a profile
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: collaboratorId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Collaborator removed successfully
+        '403':
+          description: Forbidden (only owner can remove collaborators)

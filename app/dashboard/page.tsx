@@ -1,18 +1,20 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { getAllProfiles } from "@/lib/database";
 import DashboardShell from "@/components/dashboard-shell";
 import Link from "next/link";
-import { Plus, ExternalLink, MoreVertical } from "lucide-react";
+import { Plus, ExternalLink, MoreVertical, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
     const { userId } = await auth();
+    const user = await currentUser();
+    const email = user?.emailAddresses[0]?.emailAddress;
 
     if (!userId) {
         return null; // Should be handled by middleware, but safety first
     }
 
-    const profiles = await getAllProfiles(userId);
+    const profiles = await getAllProfiles(userId, email);
 
     return (
         <DashboardShell>
@@ -48,6 +50,11 @@ export default async function DashboardPage() {
                                 key={profile.id}
                                 className="group relative bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10"
                             >
+                                {profile.clerk_id !== userId && (
+                                    <span className="absolute top-3 right-3 z-10 bg-indigo-600/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg backdrop-blur-md">
+                                        <Users size={10} /> SHARED
+                                    </span>
+                                )}
                                 <div className="h-24 bg-gradient-to-r from-slate-800 to-slate-900 flex items-end px-6 pb-0">
                                     <div className="w-16 h-16 rounded-xl border-4 border-slate-900 bg-slate-800 overflow-hidden transform translate-y-4">
                                         {profile.profile_image_url ? (

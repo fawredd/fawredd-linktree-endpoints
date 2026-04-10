@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
-import { getProfileBySlug, getAllServicesByProfileId, getSocialLinks } from "@/lib/database";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { getProfileBySlug, getAllServicesByProfileId, getSocialLinks, isAuthorized, getCollaborators } from "@/lib/database";
 import { notFound, redirect } from "next/navigation";
 import DashboardShell from "@/components/dashboard-shell";
 import ProfileEditor from "@/components/profile-editor";
@@ -12,6 +12,8 @@ interface Props {
 
 export default async function ProfileDetailPage({ params }: Props) {
     const { userId } = await auth();
+    const user = await currentUser();
+    const email = user?.emailAddresses[0]?.emailAddress;
     const { slug } = await params;
 
     if (!userId) {
@@ -20,13 +22,21 @@ export default async function ProfileDetailPage({ params }: Props) {
 
     const profile = await getProfileBySlug(slug);
 
-    // Security Check: Only allow owner to edit
-    if (!profile || profile.clerk_id !== userId) {
+    if (!profile) {
+        notFound();
+    }
+
+    const isAuthorizedUser = await isAuthorized(profile.id, userId, email);
+
+    // Security Check: allow owner or collaborator
+    if (!isAuthorizedUser) {
         notFound();
     }
 
     const services = await getAllServicesByProfileId(profile.id);
     const socialLinks = await getSocialLinks(profile.id);
+    const isOwner = profile.clerk_id === userId;
+    const collaborators = isOwner ? await getCollaborators(profile.id) : [];
 
     return (
         <DashboardShell>
@@ -44,7 +54,13 @@ export default async function ProfileDetailPage({ params }: Props) {
                     </div>
                 </div>
 
-                <ProfileEditor profile={profile} services={services} socialLinks={socialLinks} />
+                <ProfileEditor
+                    profile={profile}
+                    services={services}
+                    socialLinks={socialLinks}
+                    isOwner={isOwner}
+                    initialCollaborators={collaborators}
+                />
             </div>
         </DashboardShell>
     );
