@@ -1,0 +1,4 @@
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS background_color VARCHAR(7),
+ADD COLUMN IF NOT EXISTS border_color VARCHAR(7),
+ADD COLUMN IF NOT EXISTS font_color VARCHAR(7);

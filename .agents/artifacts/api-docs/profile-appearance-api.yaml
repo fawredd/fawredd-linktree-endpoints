@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: Profile Appearance API
+  version: 1.0.0
+  description: API for uploading profile/hero images and saving appearance colors.
+
+paths:
+  /api/upload-image:
+    post:
+      summary: Upload a profile or hero image
+      description: >
+        Accepts a multipart/form-data with an image file. The file is validated,
+        uploaded to Vercel Blob, and the public URL is returned. WebP conversion
+        is performed client-side before submission.
+      security:
+        - ClerkAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - type
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The image file to upload (WebP preferred, max 5MB)
+                type:
+                  type: string
+                  enum: [profile, hero]
+                  description: Indicates whether this is a profile avatar or hero banner
+      responses:
+        '200':
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: Public Vercel Blob URL of the uploaded image
+        '400':
+          description: Invalid file type or file too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized — no valid Clerk session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error during upload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    ClerkAuth:
+      type: http
+      scheme: bearer
+      description: Clerk session token passed via cookie (server-side auth())
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Human-readable error message

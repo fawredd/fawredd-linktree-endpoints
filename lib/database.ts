@@ -11,6 +11,9 @@ export interface Profile {
   description: string | null
   profile_image_url: string | null
   hero_image_url: string | null
+  background_color: string | null
+  border_color: string | null
+  font_color: string | null
   is_active: boolean
   created_at: string
   updated_at: string
@@ -136,6 +139,9 @@ export async function updateProfile(id: number, data: Partial<Profile>, clerkId:
         slug = CASE WHEN ${data.slug !== undefined} THEN ${data.slug} ELSE slug END,
         profile_image_url = CASE WHEN ${data.profile_image_url !== undefined} THEN ${data.profile_image_url} ELSE profile_image_url END,
         hero_image_url = CASE WHEN ${data.hero_image_url !== undefined} THEN ${data.hero_image_url} ELSE hero_image_url END,
+        background_color = CASE WHEN ${data.background_color !== undefined} THEN ${data.background_color} ELSE background_color END,
+        border_color = CASE WHEN ${data.border_color !== undefined} THEN ${data.border_color} ELSE border_color END,
+        font_color = CASE WHEN ${data.font_color !== undefined} THEN ${data.font_color} ELSE font_color END,
         is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ${id} AND (clerk_id = ${clerkId} OR id IN (SELECT profile_id FROM profile_managers WHERE email = ${email || ''}))

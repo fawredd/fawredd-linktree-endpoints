@@ -9,8 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import {
     Hourglass, Plus, Trash2, GripVertical, Save,
     ChevronDown, ChevronUp, Link as LinkIcon,
-    Instagram, Twitter, Github, Linkedin, Youtube, Globe, Users
+    Instagram, Twitter, Github, Linkedin, Youtube, Globe, Users, Palette, Mail, MessageCircle
 } from 'lucide-react';
+import { ImageUploader } from '@/components/image-uploader';
 
 import {
     DndContext,
@@ -92,7 +93,12 @@ export default function ProfileEditor({
                 name: profileData.name,
                 title: profileData.title,
                 description: profileData.description,
-                slug: profileData.slug
+                slug: profileData.slug,
+                profile_image_url: profileData.profile_image_url,
+                hero_image_url: profileData.hero_image_url,
+                background_color: profileData.background_color || '#0f172a',
+                border_color: profileData.border_color || '#6366f1',
+                font_color: profileData.font_color || '#ffffff'
             });
             if (success) toast.success('Profile updated successfully');
             else toast.error('Failed to update profile');
@@ -292,6 +298,83 @@ export default function ProfileEditor({
                     </div>
                 </section>
 
+                <section className="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2"><Palette size={20} className="text-indigo-400" /> Appearance Settings</h3>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Images</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Profile Image</Label>
+                                    <ImageUploader
+                                        label="Upload Avatar"
+                                        type="profile"
+                                        currentImage={profileData.profile_image_url}
+                                        onUploadSuccess={(url) => setProfileData(prev => ({ ...prev, profile_image_url: url }))}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Hero Image</Label>
+                                    <ImageUploader
+                                        label="Upload Banner"
+                                        type="hero"
+                                        currentImage={profileData.hero_image_url}
+                                        onUploadSuccess={(url) => setProfileData(prev => ({ ...prev, hero_image_url: url }))}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 border-t border-slate-800 pt-4">
+                            <h4 className="text-sm font-medium text-slate-400 uppercase tracking-wider">Theme Colors</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Background Color</Label>
+                                    <div className="flex items-center gap-2 bg-slate-800 p-2 rounded-md border border-slate-700 w-full">
+                                        <input
+                                            type="color"
+                                            name="background_color"
+                                            value={profileData.background_color || '#0f172a'}
+                                            onChange={handleProfileChange}
+                                            className="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0"
+                                        />
+                                        <span className="text-sm text-slate-300 font-mono">{profileData.background_color || '#0f172a'}</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Border Color</Label>
+                                    <div className="flex items-center gap-2 bg-slate-800 p-2 rounded-md border border-slate-700 w-full">
+                                        <input
+                                            type="color"
+                                            name="border_color"
+                                            value={profileData.border_color || '#6366f1'}
+                                            onChange={handleProfileChange}
+                                            className="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0"
+                                        />
+                                        <span className="text-sm text-slate-300 font-mono">{profileData.border_color || '#6366f1'}</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-slate-300">Font Color</Label>
+                                    <div className="flex items-center gap-2 bg-slate-800 p-2 rounded-md border border-slate-700 w-full">
+                                        <input
+                                            type="color"
+                                            name="font_color"
+                                            value={profileData.font_color || '#ffffff'}
+                                            onChange={handleProfileChange}
+                                            className="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0"
+                                        />
+                                        <span className="text-sm text-slate-300 font-mono">{profileData.font_color || '#ffffff'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 {isOwner && (
                     <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-xl shadow-indigo-500/5">
                         <div className="flex items-center justify-between">
@@ -368,6 +451,9 @@ export default function ProfileEditor({
                                         <option value="linkedin">LinkedIn</option>
                                         <option value="youtube">YouTube</option>
                                         <option value="website">Website</option>
+                                        <option value="whatsapp">WhatsApp</option>
+                                        <option value="email">Email</option>
+                                        <option value="tiktok">TikTok</option>
                                     </select>
                                     <Input
                                         value={social.url}
@@ -439,10 +525,19 @@ export default function ProfileEditor({
             <div className="hidden lg:block">
                 <div className="sticky top-8">
                     <h3 className="text-sm font-medium text-slate-500 uppercase tracking-widest mb-4">Preview</h3>
-                    <div className="w-[320px] h-[640px] border-[8px] border-slate-800 rounded-[3rem] bg-slate-950 mx-auto overflow-hidden shadow-2xl relative">
+                    <div
+                        className="w-[320px] h-[640px] border-[8px] border-slate-800 rounded-[3rem] mx-auto overflow-hidden shadow-2xl relative transition-colors duration-300"
+                        style={{ backgroundColor: profileData.background_color || '#0f172a' }}
+                    >
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-xl z-20"></div>
 
-                        <div className="h-full overflow-y-auto custom-scrollbar pt-12 px-6 pb-8 space-y-6">
+                        {profileData.hero_image_url && (
+                            <div className="absolute top-0 left-0 w-full h-32 z-0">
+                                <img src={profileData.hero_image_url} alt="hero preview" className="w-full h-full object-cover opacity-50" />
+                            </div>
+                        )}
+
+                        <div className="h-full overflow-y-auto custom-scrollbar pt-12 px-6 pb-8 space-y-6 relative z-10" style={{ color: profileData.font_color || '#ffffff' }}>
                             <div className="text-center space-y-4">
                                 <div className="w-20 h-20 rounded-full bg-indigo-500/20 mx-auto border-2 border-indigo-500/30 flex items-center justify-center overflow-hidden">
                                     {profileData.profile_image_url ? (
@@ -452,8 +547,8 @@ export default function ProfileEditor({
                                     )}
                                 </div>
                                 <div>
-                                    <h4 className="text-lg font-bold text-white leading-tight">{profileData.title || profileData.name}</h4>
-                                    <p className="text-sm text-slate-400 mt-2">{profileData.description}</p>
+                                    <h4 className="text-lg font-bold leading-tight" style={{ color: profileData.font_color || '#ffffff' }}>{profileData.title || profileData.name}</h4>
+                                    <p className="text-sm opacity-80 mt-2">{profileData.description}</p>
                                 </div>
                             </div>
 
@@ -466,9 +561,12 @@ export default function ProfileEditor({
                                         github: Github,
                                         linkedin: Linkedin,
                                         youtube: Youtube,
-                                        website: Globe
+                                        website: Globe,
+                                        whatsapp: MessageCircle,
+                                        email: Mail,
+                                        tiktok: Globe
                                     }[social.platform] || Globe;
-                                    return <Icon key={social.id} size={20} className="text-white/70" />;
+                                    return <Icon key={social.id} size={20} className="opacity-80" />;
                                 })}
                             </div>
 
@@ -476,7 +574,13 @@ export default function ProfileEditor({
                                 {services.filter(s => s.is_active).map(service => (
                                     <div
                                         key={service.id}
-                                        className="w-full py-3 px-4 bg-white/5 border border-white/10 rounded-xl text-center text-sm font-medium text-white hover:bg-white/10 transition-colors"
+                                        className="w-full py-3 px-4 bg-white/5 rounded-xl text-center text-sm font-medium hover:bg-white/10 transition-colors"
+                                        style={{
+                                            borderColor: profileData.border_color || '#6366f1',
+                                            borderWidth: '1px',
+                                            borderStyle: 'solid',
+                                            color: profileData.font_color || '#ffffff'
+                                        }}
                                     >
                                         {service.title}
                                     </div>

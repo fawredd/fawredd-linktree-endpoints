@@ -28,6 +28,9 @@
 - [x] Implement Multi-user Database Schema & Logic (TASK-AUTH-007)
 - [x] Implement Multi-user Management UI (TASK-AUTH-008)
 - [x] Resolve CI Quality Gate (Lint, Typecheck, Build)
+- [x] Implement Create New Profile Functionality (TASK-DASH-009)
+- [x] Profile Image Upload & Appearance Customization (TASK-DASH-010)
 
 ## Current Context
-Successfully implemented Create New Profile functionality (TASK-DASH-009). Both the "Create New Profile" (header) and "Set up your first profile" (empty state) buttons in the dashboard now open a modal dialog. The modal includes: Profile Name input, auto-generated (editable) URL Slug input, inline error display, loading state, and cancel. Server-side validation ensures duplicate profile names (case-insensitive) and duplicate slugs are rejected with user-friendly messages. New files: `app/actions/create-profile.ts` (Server Action) and `components/create-profile-modal.tsx` (Client Component). All CI gates (lint, typecheck, build) pass.
+Successfully implemented Vercel Blob based image uploads and Profile appearance customization (TASK-DASH-010). Included webp client-side optimization natively before upload. Updated database and all UI previews interact fully inline respecting Background, Border, and Font colors dynamically. All CI gates (lint, typecheck, build) pass.
+Stakeholders must provide `BLOB_READ_WRITE_TOKEN` in `.env` for image upload features to correctly function in dev/prod.

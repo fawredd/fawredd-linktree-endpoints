@@ -1,18 +1,18 @@
 import { notFound } from "next/navigation";
 import Link from 'next/link'
-import {fetchProfileBySlug,fetchServicesByProfileId, fetchSocialLinksByProfileId} from "@/actions/dbActions";
+import { fetchProfileBySlug, fetchServicesByProfileId, fetchSocialLinksByProfileId } from "@/actions/dbActions";
 
 
-import type { Metadata} from 'next'
+import type { Metadata } from 'next'
 import SocialLinks from "@/components/social-links";
- 
+
 type Props = {
   params: Promise<{ profileSlug: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
- 
+
 export async function generateMetadata(
-  { params}: Props
+  { params }: Props
 ): Promise<Metadata> {
   const { profileSlug } = await params
   return {
@@ -21,59 +21,61 @@ export async function generateMetadata(
 }
 
 interface HomePageProps {
-  params: Promise<{ profileSlug:string}>
+  params: Promise<{ profileSlug: string }>
 }
-export default async  function HomePage({ params }: HomePageProps) {
-  const {profileSlug} = await params
+export default async function HomePage({ params }: HomePageProps) {
+  const { profileSlug } = await params
   if (!profileSlug) return notFound();
   const cleanProfileSlug = sanitizeSlug(profileSlug);
   const profile = await fetchProfileBySlug(cleanProfileSlug)
   if (!profile) return notFound();
   const services = await fetchServicesByProfileId(profile.id);
-    const socialLinks = await fetchSocialLinksByProfileId(profile.id);
+  const socialLinks = await fetchSocialLinksByProfileId(profile.id);
 
-  const {titulo, descripcion} = {titulo:profile.title,descripcion:profile.description}
+  const { titulo, descripcion } = { titulo: profile.title, descripcion: profile.description }
+  const borderColor = profile.border_color || '#6366f1';
+  const fontColor = profile.font_color || '#ffffff';
 
   return (
-  <div className="container mx-auto">
-    <div className="m-4 relative">
-      <div className="mx-auto p-3">
-        <div className="mx-auto m-4 p-2 whitespace-pre-wrap border rounded-lg">
-          <h1 className="text-center p-2 text-3x1 md:text-4xl font-bold whitespace-pre-wrap">{titulo}</h1>
-          <p className="mx-auto p-4 text-center md:text-2xl mb-2">{descripcion}</p>
+    <div className="container mx-auto">
+      <div className="m-4 relative">
+        <div className="mx-auto p-3">
+          <div className="mx-auto m-4 p-2 whitespace-pre-wrap border rounded-lg" style={{ borderColor }}>
+            <h1 className="text-center p-2 text-3x1 md:text-4xl font-bold whitespace-pre-wrap">{titulo}</h1>
+            <p className="mx-auto p-4 text-center md:text-2xl mb-2">{descripcion}</p>
+          </div>
+          <div className="text-justify whitespace-pre-wrap">
+
+            {services &&
+              <ul key="servicesList">
+                {services.map(
+                  (element, elementIndex) => (
+                    <Link key={`servicesListLink${elementIndex}`} href={`/${profile.slug}/${element.slug}`} >
+                      <li key={`serviceElement${elementIndex}`} className='m-4 py-3 px-2 text-center rounded-md border-2 hover:opacity-80 transition-opacity' style={{ borderColor, color: fontColor }}>
+                        <span className='font-medium'>{element.title.trim()}</span>
+                      </li>
+                    </Link>
+                  ))}
+              </ul>
+            }
+          </div>
+          <SocialLinks socialLinks={socialLinks} />
         </div>
-        <div className="text-justify whitespace-pre-wrap">
-          
-          {services &&
-            <ul key="servicesList">
-            {services.map(
-              (element,elementIndex)=>(
-              <Link key={`servicesListLink${elementIndex}`} href={`/${profile.slug}/${element.slug}`} >
-                <li key={`serviceElement${elementIndex}`} className='m-4 py-1 px-2 text-center border bg-black opacity-40 rounded-md'>
-                  <span className='text-white'>{element.title.trim()}</span>
-                </li>
-              </Link>
-              ))}
-            </ul>
-          }
-        </div>
-        <SocialLinks socialLinks={socialLinks} />
       </div>
     </div>
-  </div>
   )
 }
 
-function sanitizeSlug(paramSlug:string | undefined): string {
-    if (!paramSlug) {
-        return ''; // Handle empty or undefined input
-    }
-    const decodedSlug = decodeURIComponent(paramSlug);
-    const lowercasedSlug = decodedSlug.toLowerCase();
-    const sanitizedSlug = lowercasedSlug
-        .replace(/[^a-z0-9 -]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    return sanitizedSlug;
+function sanitizeSlug(paramSlug: string | undefined): string {
+  if (!paramSlug) {
+    return ''; // Handle empty or undefined input
+  }
+  const decodedSlug = decodeURIComponent(paramSlug);
+  const lowercasedSlug = decodedSlug.toLowerCase();
+  const sanitizedSlug = lowercasedSlug
+    .replace(/[^a-z0-9 -]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return sanitizedSlug;
 }
