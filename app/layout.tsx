@@ -7,9 +7,18 @@ import "./globals.css"
 import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
-  title: "fawredd linktr.ee endpoints websites",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  title: {
+    default: "fawredd linktr.ee endpoints websites",
+    template: "%s | fawredd"
+  },
   description: "Crea los enlaces de asociados a linktr.ee",
   generator: "fawredd",
+  openGraph: {
+    type: "website",
+    locale: "es_ES",
+    siteName: "Fawredd Linktree Endpoints",
+  },
 }
 
 import { ClerkProvider } from "@clerk/nextjs"

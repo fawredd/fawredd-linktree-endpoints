@@ -15,8 +15,36 @@ export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
   const { profileSlug } = await params
+  if (!profileSlug) return { title: 'Not Found' };
+  
+  const cleanProfileSlug = sanitizeSlug(profileSlug);
+  const profile = await fetchProfileBySlug(cleanProfileSlug);
+  
+  if (!profile) return { title: 'Not Found' };
+
   return {
-    title: `${profileSlug} home page`
+    title: profile.title || `${profileSlug} home page`,
+    description: profile.description || `Welcome to the link page for ${profile.title || profileSlug}`,
+    openGraph: {
+      title: profile.title || `${profileSlug} home page`,
+      description: profile.description || `Welcome to the link page for ${profile.title || profileSlug}`,
+      url: `/${cleanProfileSlug}`,
+      type: 'profile',
+      images: profile.profile_image_url ? [
+        {
+          url: profile.profile_image_url,
+          width: 800,
+          height: 600,
+          alt: `Profile image for ${profile.title || profileSlug}`,
+        }
+      ] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: profile.title || `${profileSlug} home page`,
+      description: profile.description || `Welcome to the link page for ${profile.title || profileSlug}`,
+      images: profile.profile_image_url ? [profile.profile_image_url] : [],
+    }
   }
 }
 

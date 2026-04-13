@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getAllProfiles } from "@/lib/database";
 import DashboardShell from "@/components/dashboard-shell";

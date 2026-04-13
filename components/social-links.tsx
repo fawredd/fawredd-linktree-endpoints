@@ -58,9 +58,9 @@ const SocialLinks = ({ socialLinks }: SocialLinksProps) => {
           size="lg"
           className={`w-12 h-12
               rounded-full
-              bg-amber-800/10 shadow-md shadow-slate-500/50
-              hover:bg-amber-800/20
-              text-amber-800
+              bg-transparent shadow-md shadow-slate-500/50
+              hover:bg-black/10
+              text-white
               p-0 m-0 gap-0
           `}
           asChild

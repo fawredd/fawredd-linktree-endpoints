@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
 import React, { useState } from 'react';
 import { Profile, Service, SocialLink, ProfileManager } from '@/lib/database';
 import { Button } from '@/components/ui/button';

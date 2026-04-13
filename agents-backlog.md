@@ -22,6 +22,10 @@
 - [x] [TASK-DASH-009] Implement Create New Profile Functionality (Backend + Frontend) - **DONE**
 - [x] [TASK-DASH-010] Profile Image Upload & Appearance Customization (Vercel Blob) - **DONE**
 
+## Priority 2: SEO Optimization
+- [ ] [TASK-SEO-001] Define SEO Optimization Requirements (Technical BA) - **TODO**
+- [ ] [TASK-SEO-002] Implement Built-in Next.js SEO Functionalities (Frontend) - **TODO**
+
 ## Priority 0: Critical Fixes
 - [x] [TASK-TRIAGE-001] Triage: CI Failure — Build Check (PM) - **DONE**
 - [x] [TASK-FIX-001] Resolve CI Failures (Lint, Typecheck, Build) (Full Stack) - **DONE**
