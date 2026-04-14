@@ -9,16 +9,19 @@ import { Toaster } from "sonner"
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: {
-    default: "fawredd linktr.ee endpoints websites",
+    default: "fawredd endpoints websites",
     template: "%s | fawredd"
   },
-  description: "Crea los enlaces de asociados a linktr.ee",
+  description: "Your endpoints descriptions",
   generator: "fawredd",
   openGraph: {
     type: "website",
     locale: "es_ES",
     siteName: "Fawredd Linktree Endpoints",
   },
+  verification:{
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  }
 }
 
 import { ClerkProvider } from "@clerk/nextjs"
