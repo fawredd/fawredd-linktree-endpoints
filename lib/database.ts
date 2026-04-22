@@ -30,17 +30,17 @@ export interface SocialLink {
 }
 
 export interface Service {
-  id: number
-  slug: string
-  title: string
-  description: string | null
-  hero_image: string | null
-  background_image: string | null
-  sortOrder: number
-  is_active: boolean
-  created_at: string
-  updated_at: string
-  profileId: number
+  id: number;
+  slug: string;
+  title: string;
+  description: string | null;
+  hero_image: string | null;
+  background_image: string | null;
+  sort_order: number; // Cambiado de sortOrder
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  profile_id: number; // Cambiado de profileId
 }
 
 export interface ProfileManager {
@@ -53,7 +53,7 @@ export interface ProfileManager {
 export async function getProfileBySlug(slug: string): Promise<Profile | null> {
   try {
     const result = await sql`
-      SELECT * FROM profiles 
+      SELECT * FROM fawredd_linktree.profiles 
       WHERE slug = ${slug} AND is_active = true
       LIMIT 1
     `
@@ -67,7 +67,7 @@ export async function getProfileBySlug(slug: string): Promise<Profile | null> {
 export async function getSocialLinks(profileId: number): Promise<SocialLink[]> {
   try {
     const result = await sql`
-      SELECT * FROM social_links 
+      SELECT * FROM fawredd_linktree.social_links 
       WHERE profile_id = ${profileId} AND is_active = true
       ORDER BY sort_order ASC, created_at ASC
     `
@@ -82,15 +82,15 @@ export async function getAllProfiles(clerkId?: string, email?: string): Promise<
   try {
     const result = clerkId
       ? await sql`
-          SELECT p.* FROM profiles p
-          LEFT JOIN profile_managers pm ON p.id = pm.profile_id
+          SELECT p.* FROM fawredd_linktree.profiles p
+          LEFT JOIN fawredd_linktree.profile_managers pm ON p.id = pm.profile_id
           WHERE (p.clerk_id = ${clerkId} OR pm.email = ${email || ''})
           AND p.is_active = true
           GROUP BY p.id
           ORDER BY p.created_at DESC
         `
       : await sql`
-          SELECT * FROM profiles 
+          SELECT * FROM fawredd_linktree.profiles 
           WHERE is_active = true
           ORDER BY created_at DESC
         `
@@ -104,8 +104,8 @@ export async function getAllProfiles(clerkId?: string, email?: string): Promise<
 export async function getServiceByProfileIdAndSlug(profileId: number, serviceSlug: string): Promise<Service | null> {
   try {
     const result = await sql`
-      SELECT * FROM services 
-      WHERE "profileId" = ${profileId} AND is_active = true AND slug = ${serviceSlug}
+      SELECT * FROM fawredd_linktree.services 
+      WHERE profile_id = ${profileId} AND is_active = true AND slug = ${serviceSlug}
     `
     return (result[0] as Service) || null
   } catch (error) {
@@ -117,9 +117,9 @@ export async function getServiceByProfileIdAndSlug(profileId: number, serviceSlu
 export async function getAllServicesByProfileId(profileId: number): Promise<Service[]> {
   try {
     const result = await sql`
-      SELECT * FROM services 
-      WHERE is_active = true and "profileId" = ${profileId}
-      ORDER BY "sortOrder" ASC
+      SELECT * FROM fawredd_linktree.services 
+      WHERE is_active = true and profile_id = ${profileId}
+      ORDER BY sort_order ASC
     `
     return result as Service[] | []
   } catch (error) {
@@ -131,7 +131,7 @@ export async function getAllServicesByProfileId(profileId: number): Promise<Serv
 export async function updateProfile(id: number, data: Partial<Profile>, clerkId: string, email?: string): Promise<boolean> {
   try {
     await sql`
-      UPDATE profiles 
+      UPDATE fawredd_linktree.profiles 
       SET 
         name = CASE WHEN ${data.name !== undefined} THEN ${data.name} ELSE name END,
         title = CASE WHEN ${data.title !== undefined} THEN ${data.title} ELSE title END,
@@ -144,7 +144,7 @@ export async function updateProfile(id: number, data: Partial<Profile>, clerkId:
         font_color = CASE WHEN ${data.font_color !== undefined} THEN ${data.font_color} ELSE font_color END,
         is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id} AND (clerk_id = ${clerkId} OR id IN (SELECT profile_id FROM profile_managers WHERE email = ${email || ''}))
+      WHERE id = ${id} AND (clerk_id = ${clerkId} OR id IN (SELECT profile_id FROM fawredd_linktree.profile_managers WHERE email = ${email || ''}))
     `;
     return true;
   } catch (error) {
@@ -156,8 +156,8 @@ export async function updateProfile(id: number, data: Partial<Profile>, clerkId:
 export async function addService(profileId: number, data: Omit<Service, 'id' | 'created_at' | 'updated_at' | 'profileId'>): Promise<boolean> {
   try {
     await sql`
-      INSERT INTO services (slug, title, description, hero_image, "profileId", "sortOrder", is_active)
-      VALUES (${data.slug}, ${data.title}, ${data.description}, ${data.hero_image}, ${profileId}, ${data.sortOrder}, true)
+      INSERT INTO fawredd_linktree.services (slug, title, description, hero_image, profile_id, sort_order, is_active)
+      VALUES (${data.slug}, ${data.title}, ${data.description}, ${data.hero_image}, ${profileId}, ${data.sort_order}, true)
     `;
     return true;
   } catch (error) {
@@ -169,7 +169,7 @@ export async function addService(profileId: number, data: Omit<Service, 'id' | '
 export async function deleteService(id: number, profileId: number): Promise<boolean> {
   try {
     await sql`
-      UPDATE services SET is_active = false WHERE id = ${id} AND "profileId" = ${profileId}
+      UPDATE fawredd_linktree.services SET is_active = false WHERE id = ${id} AND profile_id = ${profileId}
     `;
     return true;
   } catch (error) {
@@ -181,17 +181,17 @@ export async function deleteService(id: number, profileId: number): Promise<bool
 export async function updateService(id: number, profileId: number, data: Partial<Omit<Service, 'id' | 'created_at' | 'updated_at' | 'profileId'>>): Promise<boolean> {
   try {
     await sql`
-      UPDATE services 
+      UPDATE fawredd_linktree.services 
       SET 
         slug = CASE WHEN ${data.slug !== undefined} THEN ${data.slug} ELSE slug END,
         title = CASE WHEN ${data.title !== undefined} THEN ${data.title} ELSE title END,
         description = CASE WHEN ${data.description !== undefined} THEN ${data.description} ELSE description END,
         hero_image = CASE WHEN ${data.hero_image !== undefined} THEN ${data.hero_image} ELSE hero_image END,
         background_image = CASE WHEN ${data.background_image !== undefined} THEN ${data.background_image} ELSE background_image END,
-        "sortOrder" = CASE WHEN ${data.sortOrder !== undefined} THEN ${data.sortOrder} ELSE "sortOrder" END,
+        sort_order = CASE WHEN ${data.sort_order !== undefined} THEN ${data.sort_order} ELSE sort_order END,
         is_active = CASE WHEN ${data.is_active !== undefined} THEN ${data.is_active} ELSE is_active END,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id} AND "profileId" = ${profileId}
+      WHERE id = ${id} AND profile_id = ${profileId}
     `;
     return true;
   } catch (error) {
@@ -205,9 +205,9 @@ export async function reorderServices(profileId: number, items: { id: number, so
     // We update each item's sort order. Ideally this should be a transaction.
     for (const item of items) {
       await sql`
-        UPDATE services 
-        SET "sortOrder" = ${item.sortOrder}, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ${item.id} AND "profileId" = ${profileId}
+        UPDATE fawredd_linktree.services 
+        SET sort_order = ${item.sortOrder}, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ${item.id} AND profile_id = ${profileId}
       `;
     }
     return true;
@@ -219,11 +219,11 @@ export async function reorderServices(profileId: number, items: { id: number, so
 
 export async function addSocialLink(profileId: number, platform: string, url: string): Promise<boolean> {
   try {
-    const nextOrder = await sql`SELECT COALESCE(MAX(sort_order), -1) + 1 as next_order FROM social_links WHERE profile_id = ${profileId}`;
+    const nextOrder = await sql`SELECT COALESCE(MAX(sort_order), -1) + 1 as next_order FROM fawredd_linktree.social_links WHERE profile_id = ${profileId}`;
     const sortOrder = (nextOrder[0] as { next_order: number }).next_order;
 
     await sql`
-      INSERT INTO social_links (profile_id, platform, url, sort_order, is_active)
+      INSERT INTO fawredd_linktree.social_links (profile_id, platform, url, sort_order, is_active)
       VALUES (${profileId}, ${platform}, ${url}, ${sortOrder}, true)
     `;
     return true;
@@ -236,7 +236,7 @@ export async function addSocialLink(profileId: number, platform: string, url: st
 export async function updateSocialLink(id: number, profileId: number, data: Partial<Omit<SocialLink, 'id' | 'profile_id' | 'created_at'>>): Promise<boolean> {
   try {
     await sql`
-      UPDATE social_links 
+      UPDATE fawredd_linktree.social_links 
       SET 
         platform = CASE WHEN ${data.platform !== undefined} THEN ${data.platform} ELSE platform END,
         url = CASE WHEN ${data.url !== undefined} THEN ${data.url} ELSE url END,
@@ -254,7 +254,7 @@ export async function updateSocialLink(id: number, profileId: number, data: Part
 export async function deleteSocialLink(id: number, profileId: number): Promise<boolean> {
   try {
     await sql`
-      UPDATE social_links SET is_active = false WHERE id = ${id} AND profile_id = ${profileId}
+      UPDATE fawredd_linktree.social_links SET is_active = false WHERE id = ${id} AND profile_id = ${profileId}
     `;
     return true;
   } catch (error) {
@@ -267,7 +267,7 @@ export async function deleteSocialLink(id: number, profileId: number): Promise<b
 export async function getCollaborators(profileId: number): Promise<ProfileManager[]> {
   try {
     const result = await sql`
-      SELECT * FROM profile_managers 
+      SELECT * FROM fawredd_linktree.profile_managers 
       WHERE profile_id = ${profileId} 
       ORDER BY created_at ASC
     `
@@ -281,7 +281,7 @@ export async function getCollaborators(profileId: number): Promise<ProfileManage
 export async function addCollaborator(profileId: number, email: string): Promise<boolean> {
   try {
     await sql`
-      INSERT INTO profile_managers (profile_id, email)
+      INSERT INTO fawredd_linktree.profile_managers (profile_id, email)
       VALUES (${profileId}, ${email})
       ON CONFLICT (profile_id, email) DO NOTHING
     `
@@ -295,7 +295,7 @@ export async function addCollaborator(profileId: number, email: string): Promise
 export async function removeCollaborator(id: number, profileId: number): Promise<boolean> {
   try {
     await sql`
-      DELETE FROM profile_managers WHERE id = ${id} AND profile_id = ${profileId}
+      DELETE FROM fawredd_linktree.profile_managers WHERE id = ${id} AND profile_id = ${profileId}
     `
     return true
   } catch (error) {
@@ -307,10 +307,10 @@ export async function removeCollaborator(id: number, profileId: number): Promise
 export async function isAuthorized(profileId: number, clerkId: string, email?: string): Promise<boolean> {
   try {
     const result = await sql`
-      SELECT 1 FROM profiles 
+      SELECT 1 FROM fawredd_linktree.profiles 
       WHERE id = ${profileId} AND clerk_id = ${clerkId}
       UNION
-      SELECT 1 FROM profile_managers 
+      SELECT 1 FROM fawredd_linktree.profile_managers 
       WHERE profile_id = ${profileId} AND email = ${email || ''}
     `
     return result.length > 0
@@ -327,7 +327,7 @@ export async function createProfile(
   try {
     // Check for duplicate name (case-insensitive, global)
     const nameCheck = await sql`
-      SELECT id FROM profiles WHERE LOWER(name) = LOWER(${name}) AND is_active = true LIMIT 1
+      SELECT id FROM fawredd_linktree.profiles WHERE LOWER(name) = LOWER(${name}) AND is_active = true LIMIT 1
     `
     if (nameCheck.length > 0) {
       return { success: false, error: 'name_exists' }
@@ -335,14 +335,14 @@ export async function createProfile(
 
     // Check for duplicate slug (exact, global)
     const slugCheck = await sql`
-      SELECT id FROM profiles WHERE slug = ${slug} AND is_active = true LIMIT 1
+      SELECT id FROM fawredd_linktree.profiles WHERE slug = ${slug} AND is_active = true LIMIT 1
     `
     if (slugCheck.length > 0) {
       return { success: false, error: 'slug_exists' }
     }
 
     const result = await sql`
-      INSERT INTO profiles (clerk_id, name, slug, is_active, created_at, updated_at)
+      INSERT INTO fawredd_linktree.profiles (clerk_id, name, slug, is_active, created_at, updated_at)
       VALUES (${clerkId}, ${name}, ${slug}, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       RETURNING id
     `
@@ -357,7 +357,7 @@ export async function createProfile(
 export async function isProfileOwner(profileId: number, clerkId: string): Promise<boolean> {
   try {
     const result = await sql`
-      SELECT 1 FROM profiles 
+      SELECT 1 FROM fawredd_linktree.profiles 
       WHERE id = ${profileId} AND clerk_id = ${clerkId}
     `
     return result.length > 0
