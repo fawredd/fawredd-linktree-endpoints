@@ -111,7 +111,7 @@ export default function ProfileEditor({
     };
 
     const addService = async () => {
-        const newSortOrder = services.length > 0 ? Math.max(...services.map(s => s.sortOrder)) + 1 : 0;
+        const newSortOrder = services.length > 0 ? Math.max(...services.map(s => s.sort_order)) + 1 : 0;
         const data = {
             slug: `link-${Date.now()}`,
             title: 'New Link',
